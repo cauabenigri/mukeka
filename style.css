@@ -1,0 +1,51 @@
+body, html{
+    background-color: black;
+    display: flex;
+    color: white;
+    justify-content: center;
+    align-items: center;
+}
+
+#header-text{
+    font-size: 24pt;
+}
+
+header{
+    display: flex;
+    align-items: center;
+}
+
+#boxes{
+    display: flex;
+    gap: 5vmin;    
+    #labels{
+        display: flex;
+        align-items: center;
+    }
+}
+
+form-data{
+    display: block;
+}
+
+.field{
+    width: 40vmin;
+    display: flex;
+    margin: 5vmin;
+    gap: 5vmin;
+    div{
+        width: 100%;
+        display: flex;
+    }
+    #label{
+        justify-content: left;
+    }
+    #input{
+        justify-content: right;
+    }
+}
+
+#button{
+    display: flex;
+    justify-content: center;
+}

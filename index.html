@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
+    <title>Document</title>
+</head>
+<body>
+    <div id="content">
+        <header>
+            <section>
+                <div id="header-text">
+                    <h1>EUREKA</h1>
+                </div>
+            </section>  
+            <h5>Arquivo</h5>
+        </header>
+        <div id="form-data">
+                <div class="field">
+                    <div class="label">
+                       <label for="name">Nome</label> 
+                    </div>
+                    <div class="input">
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="label">
+                        <label for="pass">Senha</label>
+                    </div>
+                    <div class="input">
+                        <input type="text" id="pass" name="pass" required>
+                    </div>
+                </div>
+                <div id="button">
+                    <button onclick="loginjs()" >Entrar</button>
+                </div>
+        </div>
+        <div id="data">
+
+        </div>
+        <script src="login.js"></script>
+    </div>
+</body>
+</html>

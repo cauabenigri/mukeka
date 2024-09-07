@@ -1,0 +1,24 @@
+{
+  "name": "mukeka",
+  "version": "1.0.0",
+  "description": "mukeka",
+  "main": "apps.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cauabenigri/mukeka.git"
+  },
+  "author": "caua",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cauabenigri/mukeka/issues"
+  },
+  "homepage": "https://github.com/cauabenigri/mukeka#readme",
+  "dependencies": {
+    "firebase": "^10.13.1",
+    "fs": "^0.0.1-security",
+    "googleapi": "^1.0.2"
+  }
+}

@@ -1,0 +1,17 @@
+body, html{
+    background-color: black;
+    display: flex;
+    color: white;
+    justify-content: center;
+    align-items: center;
+}
+
+#header-text{
+    font-size: 24pt;
+}
+
+header{
+    display: flex;
+    align-items: center;
+}
+
