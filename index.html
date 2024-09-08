@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./style.css">
-    <title>Document</title>
+    <title>Login - Eureka Arquivo</title>
 </head>
 <body>
     <div id="content">
@@ -16,10 +16,13 @@
             </section>  
             <h5>Arquivo</h5>
         </header>
+
+        <!-- Formulário de login -->
         <div id="form-data">
+            <form action="login.php" method="POST">
                 <div class="field">
                     <div class="label">
-                       <label for="name">Nome</label> 
+                        <label for="name">Nome</label>
                     </div>
                     <div class="input">
                         <input type="text" id="name" name="name" required>
@@ -30,17 +33,23 @@
                         <label for="pass">Senha</label>
                     </div>
                     <div class="input">
-                        <input type="text" id="pass" name="pass" required>
+                        <input type="password" id="pass" name="pass" required>
                     </div>
                 </div>
                 <div id="button">
-                    <button onclick="loginjs()" >Entrar</button>
+                    <button type="submit">Entrar</button>
                 </div>
+            </form>
         </div>
-        <div id="data">
 
+        <!-- Mensagens de erro ou sucesso -->
+        <div id="data">
+            <?php
+                if (isset($_GET['message'])) {
+                    echo '<p>' . htmlspecialchars($_GET['message']) . '</p>';
+                }
+            ?>
         </div>
-        <script src="login.js"></script>
     </div>
 </body>
 </html>
