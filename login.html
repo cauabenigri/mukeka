@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./style.css">
-    <title>Login - Eureka Arquivo</title>
+    <title>MUKEKA</title>
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@3/dist/js.cookie.min.js"></script>
+    <link rel="stylesheet" href="./style.css">
+
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js';
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js';
@@ -29,7 +30,7 @@
             onAuthStateChanged(auth, (user) => {
                 if (user) {
                     // Redireciona para a página de upload se o usuário já estiver autenticado
-                    window.location.href = 'upload.html';
+                    window.location.href = 'index.html';
                 }
             });
 
@@ -56,7 +57,7 @@
                     // Define um cookie após o login bem-sucedido
                     Cookies.set('auth', 'loggedIn', { expires: 7 }); // Cookie expira em 7 dias
                     
-                    window.location.href = 'upload.html'; // Redireciona para a página de upload após login
+                    window.location.href = 'index.html'; // Redireciona para a página de upload após login
                 } catch (error) {
                     console.error('Erro ao fazer login:', error);
                     alert('Falha no login. Verifique suas credenciais.');
@@ -70,10 +71,9 @@
         <header>
             <section>
                 <div id="header-text">
-                    <h1>EUREKA</h1>
+                    <h1>Mukeka</h1>
                 </div>
             </section>  
-            <h5>Arquivo</h5>
         </header>
 
         <div id="form-data">
@@ -90,6 +90,7 @@
                     <button type="submit">Entrar</button>
                 </div>
             </form>
+            <p id="no-account">Não tem uma conta? <a href="registro.html">Registre-se aqui</a></p>
         </div>
     </div>
 </body>

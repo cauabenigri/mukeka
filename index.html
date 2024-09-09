@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="./style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home - Músicas</title>
-    
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <title>MUKEKA</title>
     
     <!-- Import Firebase -->
     <script type="module" src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js"></script>
@@ -16,7 +16,7 @@
 <body>
     <header>
         <h1 id="header-text">Mukeka</h1>
-        <button id="openModalBtn" aria-label="Upload Música">Upload Música</button>
+        <button id="openModalBtn" aria-label="Upload">Upload</button>
     </header>
     <main>
         <div id="music-list"></div>
@@ -26,20 +26,31 @@
     <div id="myModal" class="modal">
         <div class="modal-content">
             <span class="close" aria-label="Fechar">&times;</span>
-            <h2>Upload Música</h2>
-            <form id="upload-form">
+ 
+
+
+<form id="upload-form">
+                <h2>Enviar</h2>
+
+                <label for="file-input" id="file-input-label">Insira aqui um arquivo de áudio</label>
                 <input type="file" id="file-input" accept=".mp3, .wav" required>
+                
+                <label for="cover-input" id="cover-input-label">Insira aqui um arquivo de capa</label>
                 <input type="file" id="cover-input" accept="image/*">
-                <button type="submit">Upload</button>
+                
+                
+                <button type="submit" id="upload-button-label">Confirmar</button>
                 <div id="progress-container">
                     <div id="progress-bar"></div>
                 </div>
-                <p id="progress-text">Progresso do upload: 0%</p>
             </form>
+            
+            <!-- Contêiner para a capa exibida -->
+            <div id="cover-preview-container">
+                <img id="cover-preview" src="default2.jpg" alt=" " class="cover-image-modal"> />
+            </div>
         </div>
     </div>
-
-
-    
 </body>
 </html>
+

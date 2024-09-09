@@ -1,6 +1,7 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-storage.js';
 import { getFirestore, collection, getDocs, addDoc } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
+import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js';
 
 const firebaseConfig = {
     apiKey: "AIzaSyD_3Uto71G3THDD3FZu_XOceGOanCz47sw",
@@ -14,6 +15,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const storage = getStorage(app);
 const firestore = getFirestore(app);
+const auth = getAuth(app);
 
 window.onload = async function() {
     const musicList = document.getElementById('music-list');
@@ -77,7 +79,9 @@ window.onload = async function() {
         console.error('Erro ao buscar músicas:', error);
     }
 
-    // Script para abrir e fechar o modal
+    // Mostrar o botão de upload
+    document.getElementById("openModalBtn").style.display = 'block';
+
     document.getElementById("openModalBtn").addEventListener("click", function() {
         const modal = document.getElementById("myModal");
         modal.classList.add("show");
@@ -98,15 +102,40 @@ window.onload = async function() {
         }
     }
 
-    // Código de upload para o modal
     const form = document.getElementById('upload-form');
     const fileInput = document.getElementById('file-input');
     const coverInput = document.getElementById('cover-input');
     const progressBar = document.getElementById('progress-bar');
     const progressText = document.getElementById('progress-text');
+    const coverPreview = document.getElementById('cover-preview');
+
+    // Adiciona o clique na capa para abrir o seletor de arquivos
+    coverPreview.addEventListener('click', () => {
+        coverInput.click();
+    });
+
+    coverInput.addEventListener('change', () => {
+        const file = coverInput.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                coverPreview.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        } else {
+            coverPreview.src = '';
+        }
+    });
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
+
+        const user = auth.currentUser;
+
+        if (!user) {
+            window.location.href = 'login.html';
+            return;
+        }
 
         const file = fileInput.files[0];
         const cover = coverInput.files[0];
@@ -134,20 +163,26 @@ window.onload = async function() {
                     progressText.textContent = 'Progresso do upload: ' + Math.round(progress) + '%';
                 }, 
                 (error) => {
-                    console.error('Erro no upload:', error);
+                    console.error('Erro no upload do MP3:', error);
                 }, 
                 async () => {
-                    const downloadURLMP3 = await getDownloadURL(uploadTaskMP3.snapshot.ref);
-                    const downloadURLCover = cover ? await getDownloadURL(uploadTaskCover.snapshot.ref) : defaultCoverUrl;
-
                     try {
+                        const downloadURLMP3 = await getDownloadURL(uploadTaskMP3.snapshot.ref);
+                        const downloadURLCover = cover ? await getDownloadURL(uploadTaskCover.snapshot.ref) : defaultCoverUrl;
+
                         await addDoc(collection(firestore, 'uploads'), {
                             mp3Url: downloadURLMP3,
                             coverUrl: downloadURLCover,
                             uniqueId: uniqueId,
                             timestamp: Date.now()
                         });
+
                         alert('Upload concluído!');
+                        // Reset form
+                        form.reset();
+                        coverPreview.src = '';
+                        progressBar.style.width = '0%';
+                        progressText.textContent = 'Progresso do upload: 0%';
                     } catch (error) {
                         console.error('Erro ao salvar informações no Firestore:', error);
                     }
@@ -157,24 +192,4 @@ window.onload = async function() {
             alert('Por favor, selecione um arquivo MP3 ou WAV e uma capa válida.');
         }
     });
-
-    document.addEventListener('DOMContentLoaded', () => {
-        const player = new Plyr('#player');
-    
-        function showPlayer(audioUrl, title) {
-            const playerElement = document.getElementById('player');
-            playerElement.src = audioUrl;
-            playerElement.play();
-            document.getElementById('music-player').style.display = 'flex';
-        }
-    
-        document.querySelectorAll('.cover-image').forEach(coverImage => {
-            coverImage.addEventListener('click', function() {
-                const audioUrl = this.dataset.audioUrl;
-                showPlayer(audioUrl, 'Título da Música'); // Atualize com título real
-            });
-        });
-    });
-    
-    
-}
+};
