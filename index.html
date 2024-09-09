@@ -6,127 +6,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - Músicas</title>
     
+    
     <!-- Import Firebase -->
     <script type="module" src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js"></script>
     <script type="module" src="https://www.gstatic.com/firebasejs/10.13.1/firebase-storage.js"></script>
     <script type="module" src="https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js"></script>
-    
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js';
-        import { getStorage, ref, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-storage.js';
-        import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
-        
-        const firebaseConfig = {
-            apiKey: "AIzaSyD_3Uto71G3THDD3FZu_XOceGOanCz47sw",
-            authDomain: "mukekajasko.firebaseapp.com",
-            projectId: "mukekajasko",
-            storageBucket: "mukekajasko.appspot.com",
-            messagingSenderId: "436758047827",
-            appId: "1:436758047827:web:6d794e8ff85f7c7bf46aa6"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const storage = getStorage(app);
-        const firestore = getFirestore(app);
-
-        window.onload = async function() {
-            const musicList = document.getElementById('music-list');
-
-            try {
-                // Fetch all documents from the 'uploads' collection
-                const querySnapshot = await getDocs(collection(firestore, 'uploads'));
-                let coverUrls = [];
-                
-                // Collect all cover URLs to use a default cover if needed
-                querySnapshot.forEach(doc => {
-                    const data = doc.data();
-                    if (data.coverUrl) {
-                        coverUrls.push(data.coverUrl);
-                    }
-                });
-
-                // If no covers are available, use a placeholder
-                const defaultCover = coverUrls.length > 0 ? coverUrls[0] : 'https://via.placeholder.com/150';
-
-                querySnapshot.forEach(async (doc) => {
-                    const data = doc.data();
-                    const coverUrl = data.coverUrl || defaultCover;
-                    const audioUrl = data.mp3Url || data.wavUrl;
-
-                    // Create a container for each music item
-                    const musicItem = document.createElement('div');
-                    musicItem.classList.add('music-item');
-                    
-                    // Create and append the cover image
-                    const coverImage = document.createElement('img');
-                    coverImage.src = coverUrl;
-                    coverImage.classList.add('cover-image');
-                    coverImage.dataset.audioUrl = audioUrl;
-                    musicItem.appendChild(coverImage);
-
-                    // Create and append the play/pause button
-                    const audio = document.createElement('audio');
-                    audio.src = audioUrl;
-                    audio.classList.add('audio-player');
-                    musicItem.appendChild(audio);
-
-                    // Add event listener to toggle play/pause
-                    coverImage.addEventListener('click', () => {
-                        if (audio.paused) {
-                            audio.play();
-                            coverImage.classList.add('playing');
-                        } else {
-                            audio.pause();
-                            coverImage.classList.remove('playing');
-                        }
-                    });
-
-                    musicList.appendChild(musicItem);
-                });
-            } catch (error) {
-                console.error('Erro ao buscar músicas:', error);
-            }
-        }
-    </script>
-    
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-            text-align: center;
-        }
-        #music-list {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
-            padding: 20px;
-        }
-        .music-item {
-            position: relative;
-            width: 150px;
-            height: 150px;
-        }
-        .cover-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: opacity 0.3s;
-        }
-        .cover-image.playing {
-            opacity: 0.7;
-        }
-        .audio-player {
-            display: none;
-        }
-    </style>
+    <script type="module" src="./script.js" defer></script>
 </head>
 <body>
-    <h1>Músicas</h1>
-    <div id="music-list"></div>
+    <header>
+        <h1 id="header-text">Mukeka</h1>
+        <button id="openModalBtn" aria-label="Upload Música">Upload Música</button>
+    </header>
+    <main>
+        <div id="music-list"></div>
+    </main>
+
+    <!-- O Modal -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" aria-label="Fechar">&times;</span>
+            <h2>Upload Música</h2>
+            <form id="upload-form">
+                <input type="file" id="file-input" accept=".mp3, .wav" required>
+                <input type="file" id="cover-input" accept="image/*">
+                <button type="submit">Upload</button>
+                <div id="progress-container">
+                    <div id="progress-bar"></div>
+                </div>
+                <p id="progress-text">Progresso do upload: 0%</p>
+            </form>
+        </div>
+    </div>
+
+
+    
 </body>
 </html>
