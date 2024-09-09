@@ -1,5 +1,3 @@
-
-
 <?php
 
 ini_set('display_errors', 1);
@@ -29,15 +27,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $password = $conn->real_escape_string($password);
 
     // Consulta para verificar se o usuário existe
-    $sql = "SELECT * FROM users WHERE nome = '$name' AND senha = '$password'";
-    $result = $conn->query($sql);
+    $sql = "SELECT * FROM users WHERE nome = ? AND senha = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ss", $name, $password);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
-        // Login bem-sucedido, redireciona para uma página de sucesso (ou exibe uma mensagem)
-        header('Location: index.html?message=Login bem-sucedido!');
+        // Login bem-sucedido, definir cookies e redirecionar
+        setcookie("user", $name, time() + (86400 * 30), "/"); // Cookie válido por 30 dias
+        header('Location: index2.html');
+        exit();
     } else {
-        // Login falhou, redireciona de volta com uma mensagem de erro
+        // Login falhou, redirecionar de volta com uma mensagem de erro
         header('Location: index.html?message=Nome ou senha incorretos!');
+        exit();
     }
 }
 

@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
+    "lib": ["dom", "es2017"],
+
+    "moduleResolution": "node",
+
+    "noUnusedLocals": true,
+    "sourceMap": true,
+    "strict": true,
+    "skipLibCheck": true
+  },
+  "exclude": ["node_modules", "dist"]
+}

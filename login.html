@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
+    <title>Login - Eureka Arquivo</title>
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js';
+        import { getAuth, signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js';
+        import { getFirestore, collection, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyD_3Uto71G3THDD3FZu_XOceGOanCz47sw",
+            authDomain: "mukekajasko.firebaseapp.com",
+            projectId: "mukekajasko",
+            storageBucket: "mukekajasko.appspot.com",
+            messagingSenderId: "436758047827",
+            appId: "1:436758047827:web:6d794e8ff85f7c7bf46aa6"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const firestore = getFirestore(app);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginForm = document.getElementById('login-form');
+
+            loginForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const name = document.getElementById('name').value;
+                const pass = document.getElementById('pass').value;
+
+                try {
+                    const usersRef = collection(firestore, 'users');
+                    const q = query(usersRef, where('name', '==', name));
+                    const querySnapshot = await getDocs(q);
+
+                    if (querySnapshot.empty) {
+                        alert('Usuário não encontrado.');
+                        return;
+                    }
+
+                    const email = querySnapshot.docs[0].data().email;
+                    await signInWithEmailAndPassword(auth, email, pass);
+                    window.location.href = 'upload.html'; // Redireciona para a página de upload após login
+                } catch (error) {
+                    console.error('Erro ao fazer login:', error);
+                    alert('Falha no login. Verifique suas credenciais.');
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <div id="content">
+        <header>
+            <section>
+                <div id="header-text">
+                    <h1>EUREKA</h1>
+                </div>
+            </section>  
+            <h5>Arquivo</h5>
+        </header>
+
+        <div id="form-data">
+            <form id="login-form">
+                <div class="field">
+                    <label for="name">Nome</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="field">
+                    <label for="pass">Senha</label>
+                    <input type="password" id="pass" name="pass" required>
+                </div>
+                <div id="button">
+                    <button type="submit">Entrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
+    <title>Registro - Eureka Arquivo</title>
+    <!-- Import Firebase SDKs -->
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js"></script>
+</head>
+<body>
+    <div id="content">
+        <header>
+            <section>
+                <div id="header-text">
+                    <h1>EUREKA</h1>
+                </div>
+            </section>  
+            <h5>Registro</h5>
+        </header>
+
+        <!-- Formulário de registro -->
+        <div id="form-data">
+            <form id="register-form">
+                <div class="field">
+                    <div class="label">
+                        <label for="email">E-mail</label>
+                    </div>
+                    <div class="input">
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="label">
+                        <label for="name">Nome</label>
+                    </div>
+                    <div class="input">
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="label">
+                        <label for="pass">Senha</label>
+                    </div>
+                    <div class="input">
+                        <input type="password" id="pass" name="pass" required>
+                    </div>
+                </div>
+                <div id="button">
+                    <button type="submit">Registrar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        // Importar funções do Firebase
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js';
+        import { getAuth, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js';
+        import { getFirestore, collection, addDoc } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
+
+        // Configuração do Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyD_3Uto71G3THDD3FZu_XOceGOanCz47sw",
+            authDomain: "mukekajasko.firebaseapp.com",
+            projectId: "mukekajasko",
+            storageBucket: "mukekajasko.appspot.com",
+            messagingSenderId: "436758047827",
+            appId: "1:436758047827:web:6d794e8ff85f7c7bf46aa6"
+        };
+
+        // Inicializar o Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const firestore = getFirestore(app);
+
+        // Função para registrar o usuário
+        document.getElementById('register-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            const name = document.getElementById('name').value;
+            const pass = document.getElementById('pass').value;
+
+            try {
+                // Criar o usuário com e-mail e senha
+                const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+                const user = userCredential.user;
+
+                // Adicionar o nome do usuário ao Firestore
+                await addDoc(collection(firestore, 'users'), {
+                    uid: user.uid,
+                    email: email,
+                    name: name
+                });
+
+                alert('Registro bem-sucedido!');
+                window.location.href = 'login.html'; // Redireciona para a página de login
+            } catch (error) {
+                console.error('Erro ao registrar:', error);
+                alert('Falha no registro. Verifique os dados e tente novamente.');
+            }
+        });
+    </script>
+</body>
+</html>

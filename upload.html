@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload MP3</title>
+    
+    <!-- Import Firebase -->
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.13.1/firebase-storage.js"></script>
+    
+    <script type="module">
+        // Configuração do Firebase
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js';
+        import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-storage.js';
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyD_3Uto71G3THDD3FZu_XOceGOanCz47sw",
+            authDomain: "mukekajasko.firebaseapp.com",
+            projectId: "mukekajasko",
+            storageBucket: "mukekajasko.appspot.com",
+            messagingSenderId: "436758047827",
+            appId: "1:436758047827:web:6d794e8ff85f7c7bf46aa6"
+        };
+
+        // Inicializa o Firebase
+        const app = initializeApp(firebaseConfig);
+        const storage = getStorage(app);
+
+        window.onload = function() {
+            const form = document.getElementById('upload-form');
+            const fileInput = document.getElementById('file-input');
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const file = fileInput.files[0];
+                if (file && file.type === 'audio/mpeg') {
+                    // Referência para onde o arquivo será salvo no Storage
+                    const storageRef = ref(storage, 'mp3/' + file.name);
+
+                    // Faz o upload do arquivo
+                    const uploadTask = uploadBytesResumable(storageRef, file);
+
+                    // Monitora o progresso do upload
+                    uploadTask.on('state_changed', 
+                        (snapshot) => {
+                            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                            progressBar.style.width = progress + '%';
+                            progressText.textContent = 'Progresso do upload: ' + Math.round(progress) + '%';
+                        }, 
+                        (error) => {
+                            console.error('Erro no upload:', error);
+                        }, 
+                        () => {
+                            // Upload concluído, obtém o link de download
+                            getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                                console.log('Arquivo disponível em:', downloadURL);
+                                alert('Upload concluído! Link: ' + downloadURL);
+                            });
+                        }
+                    );
+                } else {
+                    alert('Por favor, selecione um arquivo MP3 válido para upload.');
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+    <h1>Upload MP3</h1>
+    <form id="upload-form">
+        <input type="file" id="file-input" accept=".mp3">
+        <button type="submit">Upload</button>
+        <div id="progress-container" style="margin-top: 20px; width: 100%; background-color: #f3f3f3;">
+            <div id="progress-bar" style="width: 0%; height: 25px; background-color: #4caf50;"></div>
+        </div>
+        <p id="progress-text">Progresso do upload: 0%</p>
+    </form>
+</body>
+</html>

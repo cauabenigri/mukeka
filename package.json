@@ -19,6 +19,7 @@
   "dependencies": {
     "firebase": "^10.13.1",
     "fs": "^0.0.1-security",
-    "googleapi": "^1.0.2"
+    "googleapi": "^1.0.2",
+    "nookies": "^2.5.2"
   }
 }
