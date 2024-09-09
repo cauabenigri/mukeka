@@ -20,6 +20,7 @@
     "firebase": "^10.13.1",
     "fs": "^0.0.1-security",
     "googleapi": "^1.0.2",
+    "js-cookie": "^3.0.5",
     "nookies": "^2.5.2"
   }
 }

@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./style.css">
     <title>Login - Eureka Arquivo</title>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3/dist/js.cookie.min.js"></script>
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js';
-        import { getAuth, signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js';
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js';
         import { getFirestore, collection, query, where, getDocs } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
 
         const firebaseConfig = {
@@ -24,6 +25,14 @@
         const firestore = getFirestore(app);
 
         document.addEventListener('DOMContentLoaded', () => {
+            // Verifica se o usuário já está autenticado
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    // Redireciona para a página de upload se o usuário já estiver autenticado
+                    window.location.href = 'upload.html';
+                }
+            });
+
             const loginForm = document.getElementById('login-form');
 
             loginForm.addEventListener('submit', async (event) => {
@@ -43,6 +52,10 @@
 
                     const email = querySnapshot.docs[0].data().email;
                     await signInWithEmailAndPassword(auth, email, pass);
+                    
+                    // Define um cookie após o login bem-sucedido
+                    Cookies.set('auth', 'loggedIn', { expires: 7 }); // Cookie expira em 7 dias
+                    
                     window.location.href = 'upload.html'; // Redireciona para a página de upload após login
                 } catch (error) {
                     console.error('Erro ao fazer login:', error);
