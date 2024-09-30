@@ -23,19 +23,17 @@
         <!-- Formulário de registro -->
         <div id="form-data">
             <form id="register-form">
-                    <div class="field">
-                        <label for="email">E-mail</label>
-                        <input type="email" id="email" name="email" required>
-                    </div>
+                <div class="field">
+                    <label for="email">E-mail</label>
+                    <input type="email" id="email" name="email" required>
                 </div>
                 <div class="field">
-                        <label for="name">Nome</label>
-                        <input type="text" id="name" name="name" required>
+                    <label for="name">Nome</label>
+                    <input type="text" id="name" name="name" required>
                 </div>
                 <div class="field">
-                        <label for="pass">Senha</label>
-                        <input type="password" id="pass" name="pass" required>
-                    </div>
+                    <label for="pass">Senha</label>
+                    <input type="password" id="pass" name="pass" required>
                 </div>
                 <div id="button">
                     <button type="submit">Registrar</button>
@@ -48,7 +46,7 @@
         // Importar funções do Firebase
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js';
         import { getAuth, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js';
-        import { getFirestore, collection, addDoc } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
+        import { getFirestore, setDoc, doc } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
 
         // Configuração do Firebase
         const firebaseConfig = {
@@ -77,9 +75,8 @@
                 const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
                 const user = userCredential.user;
 
-                // Adicionar o nome do usuário ao Firestore
-                await addDoc(collection(firestore, 'users'), {
-                    uid: user.uid,
+                // Adicionar o nome do usuário ao Firestore, usando o UID como ID do documento
+                await setDoc(doc(firestore, 'users', user.uid), {
                     email: email,
                     name: name
                 });

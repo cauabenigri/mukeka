@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Música</title>
+    <link rel="stylesheet" href="music.css"> <!-- Link para seu CSS -->
+    <script type="module" src="music.js" defer></script> <!-- Link para o seu JavaScript -->
+</head>
+<body>
+    <header>
+        <h1 id="music-title"></h1>
+        <img id="music-cover" alt="Capa da música" />
+        <p id="music-bpm"></p> <!-- Adicionado BPM -->
+        <p id="music-note"></p> <!-- Adicionado Nota e Escala -->
+        <p id="music-price"></p> <!-- Adicionado Preço -->
+        <p id="music-pix"></p> <!-- Adicionado Chave Pix -->
+        <p id="music-creator"><a id="creator-link" href="#">Criador: </a></p> <!-- Link para a página do criador -->
+        <audio id="audio-player" controls>
+            <source id="audio-source" src="" type="audio/mpeg">
+            Seu navegador não suporta o elemento de áudio.
+        </audio>
+    </header>
+</body>
+</html>

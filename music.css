@@ -1,0 +1,176 @@
+/* Reset e configuração inicial */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background-color: black;
+    color: white;
+    font-family: 'OldLondon', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Fonte personalizada */
+@font-face {
+    font-family: 'OldLondon';
+    src: url('OldLondon.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* Layout do header */
+header {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    user-select: none; /* Bloqueia a seleção de texto */
+}
+
+/* Configuração das capas das músicas */
+#music-list {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* Sempre 4 colunas */
+    gap: 10px; /* Reduz o espaço entre as capas */
+    padding: 20px;
+    width: 100%;
+    max-width: 960px; /* Reduz a largura máxima para ajustar as capas */
+    box-sizing: border-box; /* Inclui padding e border na largura total */
+}
+
+/* Estilo das músicas */
+.music-item {
+    width: 100%;
+    aspect-ratio: 1 / 1; /* Mantém a proporção quadrada */
+    position: relative;
+    overflow: hidden; /* Garante que o conteúdo não ultrapasse os limites do item */
+    border-radius: 8px; /* Bordas arredondadas */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5); /* Sombra para destaque */
+}
+
+/* Estilo das imagens de capa */
+.cover-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Cobre o espaço mantendo a proporção */
+    transition: opacity 0.3s, transform 0.3s; /* Transição suave */
+    cursor: pointer; /* Indica que a imagem é clicável */
+}
+
+/* Efeito hover */
+.cover-image:hover {
+    opacity: 0.8; /* Ajuste a opacidade no hover se desejar */
+    transform: scale(1.05); /* Aumenta a imagem um pouco no hover para um efeito de destaque */
+}
+
+.cover-image.playing {
+    opacity: 0.7; /* Opacidade quando a capa está tocando */
+}
+
+/* Ocultar o player de áudio */
+.audio-player {
+    display: none;
+}
+
+/* Estilo para o botão */
+#openModalBtn {
+    font-family: 'OldLondon';
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    padding: 0.1px 0.1px; /* Padding fixo para manter o tamanho do botão */
+    font-size: calc(1.5vw + 1rem); /* Ajusta o tamanho da fonte responsivamente, com um valor mínimo */
+    min-font-size: 50px; /* Adiciona um tamanho mínimo para a fonte */
+    cursor: pointer;
+    background-color: #000000;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+#openModalBtn:hover {
+    transition: 0.5s;
+    color: #4caf50; /* Cor do texto ao passar o mouse */
+}
+
+/* Estilo para o modal */
+.modal {
+    display: none; /* Esconde o modal por padrão */
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.5); /* Cor de fundo escura com opacidade */
+    justify-content: center; /* Centraliza horizontalmente */
+    align-items: center; /* Centraliza verticalmente */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modal.show {
+    display: flex;
+    opacity: 1;
+}
+
+/* Estilo para o conteúdo do modal */
+.modal-content {
+    background-color: #000000;
+    width: 400px; /* Largura do modal */
+    height: auto; /* Ajusta a altura para acomodar o conteúdo */
+    border-radius: 8px; /* Bordas arredondadas */
+    position: relative; /* Para posicionar o botão de fechar e a barra de progresso */
+    padding: 20px;
+    box-shadow: 0px 8px 8px rgba(65, 42, 42, 0.2);
+    color: #fff;
+}
+
+/* Estilo para a capa dentro do modal */
+.cover-image-modal {
+    width: 140px; /* Largura da imagem no modal */
+    height: 140px; /* Altura da imagem no modal */
+    object-fit: cover; /* Cobre o espaço mantendo a proporção */
+    border-radius: 8px; /* Arredonda os cantos da capa */
+}
+
+/* Estilo para o título do modal */
+.modal-content h2 {
+    margin: 0; /* Remove a margem padrão */
+    padding: 0; /* Remove o padding padrão */
+    font-size: 3em; /* Ajuste o tamanho da fonte conforme necessário */
+    text-align: left; /* Alinhamento do texto do título */
+    margin-bottom: 20px; /* Adiciona um espaço abaixo do título */
+}
+
+/* Estilo para o botão de fechar */
+.close {
+    color: #ffffff;
+    position: absolute;
+    top: 5px;
+    right: 13px;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: rgb(173, 173, 173);
+    text-decoration: none;
+}
+
+/* Media queries para ajustar o layout em dispositivos menores */
+@media (max-width: 768px) {
+    #music-list {
+        grid-template-columns: repeat(2, 1fr); /* 2 colunas em telas menores */
+    }
+}
+
+@media (max-width: 480px) {
+    #music-list {
+        grid-template-columns: 1fr; /* 1 coluna em telas muito pequenas */
+    }
+}

@@ -17,24 +17,16 @@ const storage = getStorage(app);
 const firestore = getFirestore(app);
 const auth = getAuth(app);
 
+const defaultCoverUrl = 'https://firebasestorage.googleapis.com/v0/b/mukekajasko.appspot.com/o/covers%2Fdefault.jpg?alt=media';
+
 window.onload = async function() {
     const musicList = document.getElementById('music-list');
-    let currentAudio = null;
-    let currentCoverImage = null;
-
+    
     try {
         const querySnapshot = await getDocs(collection(firestore, 'uploads'));
-        let coverUrls = [];
-        
-        querySnapshot.forEach(doc => {
-            const data = doc.data();
-            if (data.coverUrl) {
-                coverUrls.push(data.coverUrl);
-            }
-        });
-
+        const coverUrls = querySnapshot.docs.map(doc => doc.data().coverUrl).filter(url => url);
         const defaultCover = coverUrls.length > 0 ? coverUrls[0] : 'https://via.placeholder.com/150';
-
+        
         querySnapshot.forEach(async (doc) => {
             const data = doc.data();
             const coverUrl = data.coverUrl || defaultCover;
@@ -42,35 +34,19 @@ window.onload = async function() {
 
             const musicItem = document.createElement('div');
             musicItem.classList.add('music-item');
-            
+
             const coverImage = document.createElement('img');
             coverImage.src = coverUrl;
             coverImage.classList.add('cover-image');
             coverImage.dataset.audioUrl = audioUrl;
             musicItem.appendChild(coverImage);
 
-            const audio = document.createElement('audio');
-            audio.src = audioUrl;
-            audio.classList.add('audio-player');
-            musicItem.appendChild(audio);
+            // Adiciona o ID da música como atributo data-id
+            musicItem.setAttribute('data-id', doc.id); // Obtém o ID do documento do Firestore
 
-            coverImage.addEventListener('click', () => {
-                if (currentAudio && currentAudio !== audio) {
-                    currentAudio.pause();
-                    currentCoverImage.classList.remove('playing');
-                }
-
-                if (audio.paused) {
-                    audio.play();
-                    coverImage.classList.add('playing');
-                    currentAudio = audio;
-                    currentCoverImage = coverImage;
-                } else {
-                    audio.pause();
-                    coverImage.classList.remove('playing');
-                    currentAudio = null;
-                    currentCoverImage = null;
-                }
+            musicItem.addEventListener('click', () => {
+                // Redireciona para a página da música com o ID
+                window.location.href = `music.html?id=${doc.id}`;
             });
 
             musicList.appendChild(musicItem);
@@ -105,9 +81,9 @@ window.onload = async function() {
     const form = document.getElementById('upload-form');
     const fileInput = document.getElementById('file-input');
     const coverInput = document.getElementById('cover-input');
+    const coverPreview = document.getElementById('cover-preview');
     const progressBar = document.getElementById('progress-bar');
     const progressText = document.getElementById('progress-text');
-    const coverPreview = document.getElementById('cover-preview');
 
     // Adiciona o clique na capa para abrir o seletor de arquivos
     coverPreview.addEventListener('click', () => {
@@ -116,20 +92,20 @@ window.onload = async function() {
 
     coverInput.addEventListener('change', () => {
         const file = coverInput.files[0];
+        const reader = new FileReader();
         if (file) {
-            const reader = new FileReader();
             reader.onload = function(e) {
                 coverPreview.src = e.target.result;
             };
             reader.readAsDataURL(file);
         } else {
-            coverPreview.src = '';
+            coverPreview.src = defaultCoverUrl; // Retorna para a capa padrão se não houver arquivo
         }
     });
 
+    // Adiciona um ouvinte de eventos para o formulário
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
-
         const user = auth.currentUser;
 
         if (!user) {
@@ -139,22 +115,22 @@ window.onload = async function() {
 
         const file = fileInput.files[0];
         const cover = coverInput.files[0];
-        const defaultCoverUrl = 'https://firebasestorage.googleapis.com/v0/b/mukekajasko.appspot.com/o/covers%2Fdefault.jpg?alt=media';
+        const title = document.getElementById('title-input').value;
+        const bpm = document.getElementById('bpm-input').value;
+        const note = document.getElementById('note-input').value;
+        const scale = document.getElementById('scale-input').value;
+        const rawPrice = document.getElementById('price-input').value;
+        const pixKey = document.getElementById('pix-input').value;
+
+        const price = formatPrice(rawPrice);
 
         if (file && (file.type === 'audio/mpeg' || file.type === 'audio/wav')) {
             const uniqueId = Date.now().toString();
-
             const storageRefMP3 = ref(storage, 'mp3/' + uniqueId + (file.type === 'audio/mpeg' ? '.mp3' : '.wav'));
             const storageRefCover = ref(storage, 'covers/' + uniqueId + '.jpg');
 
             const uploadTaskMP3 = uploadBytesResumable(storageRefMP3, file);
-            let uploadTaskCover;
-
-            if (cover) {
-                uploadTaskCover = uploadBytesResumable(storageRefCover, cover);
-            } else {
-                uploadTaskCover = uploadBytesResumable(storageRefCover, fetch(defaultCoverUrl).then(response => response.blob()));
-            }
+            const uploadTaskCover = cover ? uploadBytesResumable(storageRefCover, cover) : uploadBytesResumable(storageRefCover, fetch(defaultCoverUrl).then(response => response.blob()));
 
             uploadTaskMP3.on('state_changed', 
                 (snapshot) => {
@@ -173,14 +149,20 @@ window.onload = async function() {
                         await addDoc(collection(firestore, 'uploads'), {
                             mp3Url: downloadURLMP3,
                             coverUrl: downloadURLCover,
+                            title: title,
+                            bpm: bpm,
+                            note: note,
+                            scale: scale,
+                            price: price,  // Preço formatado
+                            pixKey: pixKey,
                             uniqueId: uniqueId,
+                            userId: user.uid,  // Armazena o ID do usuário
                             timestamp: Date.now()
                         });
 
                         alert('Upload concluído!');
-                        // Reset form
                         form.reset();
-                        coverPreview.src = '';
+                        coverPreview.src = defaultCoverUrl; // Reseta para a capa padrão
                         progressBar.style.width = '0%';
                         progressText.textContent = 'Progresso do upload: 0%';
                     } catch (error) {
@@ -188,8 +170,48 @@ window.onload = async function() {
                     }
                 }
             );
+
+            uploadTaskCover.on('state_changed', 
+                null, 
+                (error) => {
+                    console.error('Erro no upload da capa:', error);
+                }
+            );
         } else {
-            alert('Por favor, selecione um arquivo MP3 ou WAV e uma capa válida.');
+            alert('Por favor, selecione um arquivo de áudio válido.');
+        }
+    });
+
+    const priceInput = document.getElementById('price-input');
+
+    // Adiciona um ouvinte de eventos para o campo de preço
+    priceInput.addEventListener('input', function(e) {
+        let value = e.target.value;
+
+        // Remove letras e formata o valor para R$
+        value = value.replace(/[^0-9]/g, ''); // Remove tudo que não é número
+        if (value) {
+            value = (parseFloat(value) / 100).toFixed(2); // Converte para formato de moeda
+            e.target.value = `R$ ${value.replace('.', ',')}`; // Atualiza o campo com a formatação
+        } else {
+            e.target.value = 'R$ 0,00'; // Valor padrão
         }
     });
 };
+
+const bpmInput = document.getElementById('bpm-input');
+const bpmValueDisplay = document.getElementById('bpm-value');
+
+bpmInput.addEventListener('input', function() {
+    bpmValueDisplay.textContent = this.value; // Atualiza o texto do BPM exibido
+});
+
+function formatPrice(value) {
+    value = value.replace(/[^0-9]/g, ''); // Remove tudo que não é número
+    if (value) {
+        value = (parseFloat(value) / 100).toFixed(2); // Converte para formato de moeda
+        return `R$ ${value.replace('.', ',')}`; // Retorna o preço formatado
+    } else {
+        return 'R$ 0,00'; // Valor padrão
+    }
+}

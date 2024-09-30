@@ -11,6 +11,7 @@
     <script type="module" src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js"></script>
     <script type="module" src="https://www.gstatic.com/firebasejs/10.13.1/firebase-storage.js"></script>
     <script type="module" src="https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js"></script>
     <script type="module" src="./script.js" defer></script>
 </head>
 <body>
@@ -26,18 +27,68 @@
     <div id="myModal" class="modal">
         <div class="modal-content">
             <span class="close" aria-label="Fechar">&times;</span>
- 
 
-
-<form id="upload-form">
+            <form id="upload-form">
                 <h2>Enviar</h2>
-
+                
                 <label for="file-input" id="file-input-label">Insira aqui um arquivo de áudio</label>
                 <input type="file" id="file-input" accept=".mp3, .wav" required>
                 
                 <label for="cover-input" id="cover-input-label">Insira aqui um arquivo de capa</label>
                 <input type="file" id="cover-input" accept="image/*">
                 
+                <!-- Campo para título -->
+                <label for="title-input">Título:</label>
+                <input type="text" id="title-input" required>
+
+                <label for="music-type">Tipo de Música:</label>
+                <select id="music-type" required>
+                    <option value="">Selecione o tipo de música</option>
+                    <option value="Vocal">Vocal</option>
+                    <option value="Instrumental">Instrumental</option>
+                    <option value="Loop">Loop</option>
+                    <option value="Outro">Outro</option>
+                </select>
+                
+                <!-- Slider para BPM -->
+                <label for="bpm-input">BPM:</label>
+                <input type="range" id="bpm-input" min="50" max="300" value="100" step="1">
+                <span id="bpm-value">100</span>
+                
+                <!-- Seleção da Nota Musical -->
+                <label for="note-input">Nota Musical:</label>
+                <select id="note-input">
+                    <option value="C">C</option>
+                    <option value="C#">C#</option>
+                    <option value="D">D</option>
+                    <option value="D#">D#</option>
+                    <option value="E">E</option>
+                    <option value="F">F</option>
+                    <option value="F#">F#</option>
+                    <option value="G">G</option>
+                    <option value="G#">G#</option>
+                    <option value="A">A</option>
+                    <option value="A#">A#</option>
+                    <option value="B">B</option>
+                </select>
+                
+                <!-- Seleção do Tipo de Escala -->
+                <label for="scale-input">Tipo de Escala:</label>
+                <select id="scale-input">
+                    <option value="Maior">Maior</option>
+                    <option value="Menor">Menor</option>
+                    <option value="Diminuta">Diminuta</option>
+                    <option value="Aumentada">Aumentada</option>
+                    <!-- Adicione mais opções conforme necessário -->
+                </select>
+                
+                <!-- Campo para preço -->
+                <label for="price-input">Preço:</label>
+                <input type="text" id="price-input" placeholder="R$ 00,00" required onblur="formatPrice()">
+
+                <!-- Campo para chave PIX -->
+                <label for="pix-input">Chave PIX:</label>
+                <input type="text" id="pix-input" required>
                 
                 <button type="submit" id="upload-button-label">Confirmar</button>
                 <div id="progress-container">
@@ -47,10 +98,14 @@
             
             <!-- Contêiner para a capa exibida -->
             <div id="cover-preview-container">
-                <img id="cover-preview" src="default2.jpg" alt=" " class="cover-image-modal"> />
+                <img id="cover-preview" src="default2.jpg" alt=" " class="cover-image-modal">
             </div>
         </div>
     </div>
+
+    <script>
+        // Atualiza o valor exibido do slider
+
+    </script>
 </body>
 </html>
-

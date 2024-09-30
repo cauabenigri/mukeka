@@ -27,6 +27,7 @@ h1 {
     max-width: 90%; /* Limita a largura máxima do título */
     z-index: 10; 
     line-height: 1.1; /* Ajusta o espaçamento entre linhas se necessário */
+    user-select: none; /* Bloqueia a seleção de texto */
 }
 
 /* Layout do header */
@@ -298,21 +299,12 @@ html, body {
     font-style: normal;
 }
 
-/* Estilo do título */
-h1 {
-    font-size: calc(4rem + 4vw); /* Ajusta o tamanho da fonte de acordo com a largura da janela */
-    text-align: center;
-    margin: 5vmin 0 2rem 0; /* Espaço acima e abaixo do título */
-    max-width: 90%; /* Limita a largura máxima do título */
-    z-index: 10; 
-    line-height: 1.1; /* Ajusta o espaçamento entre linhas se necessário */
-}
-
 /* Layout do header */
 header {
     width: 100%;
     display: flex;
     justify-content: center;
+    user-select: none; /* Bloqueia a seleção de texto */
 }
 
 /* Configuração das capas das músicas */
