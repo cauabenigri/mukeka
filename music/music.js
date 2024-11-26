@@ -41,10 +41,6 @@ window.onload = async function() {
             document.getElementById('music-price').textContent = 'Preço: ' + (musicData.price || 'Preço não disponível');
             document.getElementById('music-pix').textContent = 'Pix: ' + (musicData.pixKey || 'Chave Pix não disponível');
 
-            // Carregar a fonte do áudio
-            const audioSource = document.getElementById('audio-source');
-            audioSource.src = musicData.mp3Url || musicData.wavUrl || '';
-            document.getElementById('audio-player').load(); // Carrega a fonte do áudio
 
             // Exibir o nome do criador
             const musicCreator = document.getElementById('music-creator');

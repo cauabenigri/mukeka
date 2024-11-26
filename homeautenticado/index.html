@@ -13,6 +13,8 @@
     <script type="module" src="https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js"></script>
     <script type="module" src="https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js"></script>
     <script type="module" src="./script.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
+
 </head>
 <body>
     <header>
@@ -41,8 +43,8 @@
                 <label for="title-input">Título:</label>
                 <input type="text" id="title-input" required>
 
-                <label for="music-type">Tipo de Música:</label>
-                <select id="music-type" required>
+                <label for="music-input">Tipo de Música:</label>
+                <select id="music-input" required>
                     <option value="">Selecione o tipo de música</option>
                     <option value="Vocal">Vocal</option>
                     <option value="Instrumental">Instrumental</option>
@@ -102,6 +104,29 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal para exibir os dados da música -->
+<div id="musicDataModal" class="modal">
+    <div class="modal-content">
+        <span class="close" aria-label="Fechar">&times;</span>
+        <h2 id="music-title"></h2>
+        <p><strong>Tipo de Música:</strong> <span id="music-type"></span></p>
+        <p><strong>BPM:</strong> <span id="music-bpm"></span></p>
+        <p><strong>Nota Musical:</strong> <span id="music-note"></span></p>
+        <p><strong>Escala:</strong> <span id="music-scale"></span></p>
+        <p><strong>Preço:</strong> <span id="music-price"></span></p>
+        <p><strong>Chave PIX:</strong> <span id="music-pix-key"></span></p>
+        <p id="music-userid"></p> <!-- Exibe o userId -->
+        <p id="music-username"></p> <!-- Exibe o nome do usuário -->
+
+
+        
+        <div id="music-cover-container">
+            <img id="music-cover" src="" alt="Capa da música" class="cover-image-modal">
+        </div>
+    </div>
+</div>
+
 
     <script>
         // Atualiza o valor exibido do slider

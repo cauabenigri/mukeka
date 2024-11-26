@@ -21,7 +21,9 @@ const defaultCoverUrl = 'https://firebasestorage.googleapis.com/v0/b/mukekajasko
 
 window.onload = async function() {
     const musicList = document.getElementById('music-list');
-    
+    const musicDataModal = document.getElementById("musicDataModal");
+    const closeModalBtn = musicDataModal.querySelector(".close");
+
     try {
         const querySnapshot = await getDocs(collection(firestore, 'uploads'));
         const coverUrls = querySnapshot.docs.map(doc => doc.data().coverUrl).filter(url => url);
@@ -44,9 +46,32 @@ window.onload = async function() {
             // Adiciona o ID da música como atributo data-id
             musicItem.setAttribute('data-id', doc.id); // Obtém o ID do documento do Firestore
 
-            musicItem.addEventListener('click', () => {
-                // Redireciona para a página da música com o ID
-                window.location.href = `music.html?id=${doc.id}`;
+            musicItem.addEventListener('click', async () => {
+                // Carregar os dados da música no modal
+                const musicId = doc.id;
+                const title = data.title;
+                const type = data.type;  // Acesse o tipo de música
+                const bpm = data.bpm;
+                const note = data.note;
+                const scale = data.scale;
+                const price = data.price;
+                const pixKey = data.pixKey;
+                const cover = data.coverUrl || defaultCover;
+                const userId = data.userId;  // Obtém o userId da música
+
+                // Preenche os dados no modal
+                document.getElementById('music-title').textContent = title;
+                document.getElementById('music-type').textContent = type;  // Exibe o tipo de música
+                document.getElementById('music-bpm').textContent = bpm;
+                document.getElementById('music-note').textContent = note;
+                document.getElementById('music-scale').textContent = scale;
+                document.getElementById('music-price').textContent = price;
+                document.getElementById('music-pix-key').textContent = pixKey;
+                document.getElementById('music-cover').src = cover;
+                document.getElementById('music-userid').textContent = `Usuário ID: ${userId}`;
+
+                // Exibir o modal
+                musicDataModal.classList.add("show");
             });
 
             musicList.appendChild(musicItem);
@@ -54,6 +79,18 @@ window.onload = async function() {
     } catch (error) {
         console.error('Erro ao buscar músicas:', error);
     }
+
+    // Fechar o modal de exibição de dados ao clicar no "X"
+    closeModalBtn.addEventListener("click", () => {
+        musicDataModal.classList.remove("show");
+    });
+
+    // Fechar o modal se o usuário clicar fora do modal
+    window.onclick = function(event) {
+        if (event.target === musicDataModal) {
+            musicDataModal.classList.remove("show");
+        }
+    };
 
     // Mostrar o botão de upload
     document.getElementById("openModalBtn").style.display = 'block';
@@ -76,7 +113,7 @@ window.onload = async function() {
             modal.classList.remove("show");
             document.getElementById("openModalBtn").classList.remove("disabled");
         }
-    }
+    };
 
     const form = document.getElementById('upload-form');
     const fileInput = document.getElementById('file-input');
@@ -116,6 +153,7 @@ window.onload = async function() {
         const file = fileInput.files[0];
         const cover = coverInput.files[0];
         const title = document.getElementById('title-input').value;
+        const musicType = document.getElementById('music-input').value; // Obter o tipo da música
         const bpm = document.getElementById('bpm-input').value;
         const note = document.getElementById('note-input').value;
         const scale = document.getElementById('scale-input').value;
@@ -150,6 +188,7 @@ window.onload = async function() {
                             mp3Url: downloadURLMP3,
                             coverUrl: downloadURLCover,
                             title: title,
+                            type: musicType,  // Salvando o tipo da música
                             bpm: bpm,
                             note: note,
                             scale: scale,
