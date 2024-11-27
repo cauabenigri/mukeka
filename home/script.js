@@ -26,6 +26,10 @@ window.onload = function () {
     }
 };
 
+
+
+
+
 // Função para carregar música aleatória
 async function loadRandomMusic(container, audio) {
     try {
@@ -158,13 +162,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const querySnapshot = await getDocs(q);
 
             if (querySnapshot.empty) {
-                alert('Usuário não encontrado.');
+                showNotification('Usuário não encontrado.', 'error');
                 return;
             }
 
             const email = querySnapshot.docs[0].data().email;
             await signInWithEmailAndPassword(auth, email, pass);
-            alert('Login bem-sucedido!');
+            showNotification('Login bem-sucedido!', 'success');
             loginModal.style.display = 'none';
 
             // Cria o cookie para manter o usuário autenticado
@@ -174,7 +178,7 @@ document.addEventListener('DOMContentLoaded', () => {
             window.location.href = '../homeautenticado/index.html';
         } catch (error) {
             console.error('Erro ao fazer login:', error);
-            alert('Falha no login. Verifique suas credenciais.');
+            showNotification('Falha no login. Verifique suas credenciais.', 'error');
         }
     });
 
@@ -195,10 +199,69 @@ document.addEventListener('DOMContentLoaded', () => {
                 name: name
             });
 
-            alert('Registro bem-sucedido!');
+            showNotification('Registro bem-sucedido!', 'success');
         } catch (error) {
             console.error('Erro ao registrar:', error);
-            alert('Falha no registro. Tente novamente.');
+            showNotification('Falha no registro. Tente novamente.', 'error');
+
         }
     });
+
+
+    // Função para exibir notificações
+function showNotification(message, type = 'success') {
+    const notification = document.getElementById('notification');
+    notification.textContent = message;
+
+        // Limpar qualquer classe de tipo anterior
+        notification.classList.remove('success', 'error');
+
+        // Adicionar a classe correspondente ao tipo
+        if (type === 'success') {
+            notification.classList.add('success');
+        } else if (type === 'error') {
+            notification.classList.add('error');
+        }
+    
+
+
+
+    notification.classList.remove('hidden'); // Mostra a notificação
+    setTimeout(() => {
+        notification.classList.add('hidden'); // Esconde após 3 segundos
+    }, 1000);
+}
+
+// Exemplo de uso no login
+loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = document.getElementById('login-name').value;
+    const pass = document.getElementById('login-pass').value;
+
+    try {
+        const usersRef = collection(firestore, 'users');
+        const q = query(usersRef, where('name', '==', name));
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) {
+            showNotification('Usuário não encontrado.', 'error');
+            return;
+        }
+
+        const email = querySnapshot.docs[0].data().email;
+        await signInWithEmailAndPassword(auth, email, pass);
+        showNotification('Login bem-sucedido!', 'success');
+        loginModal.style.display = 'none';
+
+        Cookies.set('auth', 'loggedIn', { expires: 7 });
+        window.location.href = '../homeautenticado/index.html';
+    } catch (error) {
+        console.error('Erro ao fazer login:', error);
+        showNotification('Falha no login. Tente novamente.', 'error');
+    }
+});
+
+
+
+    
 });

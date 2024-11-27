@@ -233,3 +233,47 @@ h2 {
     font-size: 20px;
     cursor: pointer;
 }
+
+#notification {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: black;  /* Cor padrão */
+    color: white;
+    padding: 40px 80px;    /* Aumentando o padding para aumentar o tamanho da caixa */
+    font-size: 2rem;        /* Aumentando o tamanho da fonte */
+    height: 150px;          /* Definindo uma altura fixa para a notificação */
+    display: flex;
+    align-items: center;    /* Alinha o conteúdo verticalmente no centro */
+    justify-content: space-between;
+    z-index: 10000;
+    transition: all 0.3s ease;
+    text-align: center;     /* Centraliza o texto */
+    border-radius: 15px;    /* Arredondamento das bordas */
+    opacity: 0.85; /* Opacidade reduzida, mas ainda visível */
+}
+
+
+#notification.hidden {
+    opacity: 0;
+    transform: translate(-50%, -50%) translateY(-20px);
+    pointer-events: none;
+}
+
+/* Notificação de sucesso */
+#notification.success {
+    background-color:#000000;  /* Verde para sucesso */
+}
+
+/* Notificação de erro */
+#notification.error {
+    background-color: #000000;  /* Vermelho para erro */
+    
+}
+
+#notification .close-btn {
+    cursor: pointer;
+    font-size: 1.5rem;
+    font-weight: bold;
+}

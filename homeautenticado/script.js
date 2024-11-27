@@ -1,7 +1,7 @@
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js';
-import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-storage.js';
-import { getFirestore, collection, getDocs, addDoc } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
-import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js';
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js';
+import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-storage.js';
+import { getFirestore, doc, getDoc, collection, getDocs, addDoc } from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js';
+import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js';
 
 const firebaseConfig = {
     apiKey: "AIzaSyD_3Uto71G3THDD3FZu_XOceGOanCz47sw",
@@ -26,12 +26,10 @@ window.onload = async function() {
 
     try {
         const querySnapshot = await getDocs(collection(firestore, 'uploads'));
-        const coverUrls = querySnapshot.docs.map(doc => doc.data().coverUrl).filter(url => url);
-        const defaultCover = coverUrls.length > 0 ? coverUrls[0] : 'https://via.placeholder.com/150';
-        
-        querySnapshot.forEach(async (doc) => {
-            const data = doc.data();
-            const coverUrl = data.coverUrl || defaultCover;
+
+        querySnapshot.forEach(async (docSnapshot) => {
+            const data = docSnapshot.data(); // Pega os dados diretamente
+            const coverUrl = data.coverUrl || 'https://via.placeholder.com/150';
             const audioUrl = data.mp3Url || data.wavUrl;
 
             const musicItem = document.createElement('div');
@@ -44,11 +42,10 @@ window.onload = async function() {
             musicItem.appendChild(coverImage);
 
             // Adiciona o ID da música como atributo data-id
-            musicItem.setAttribute('data-id', doc.id); // Obtém o ID do documento do Firestore
+            musicItem.setAttribute('data-id', docSnapshot.id);  // Usando docSnapshot.id diretamente
 
-            musicItem.addEventListener('click', async () => {
+            musicItem.addEventListener('click', () => {
                 // Carregar os dados da música no modal
-                const musicId = doc.id;
                 const title = data.title;
                 const type = data.type;  // Acesse o tipo de música
                 const bpm = data.bpm;
@@ -56,7 +53,7 @@ window.onload = async function() {
                 const scale = data.scale;
                 const price = data.price;
                 const pixKey = data.pixKey;
-                const cover = data.coverUrl || defaultCover;
+                const cover = data.coverUrl || 'https://via.placeholder.com/150';
                 const userId = data.userId;  // Obtém o userId da música
 
                 // Preenche os dados no modal
@@ -68,7 +65,11 @@ window.onload = async function() {
                 document.getElementById('music-price').textContent = price;
                 document.getElementById('music-pix-key').textContent = pixKey;
                 document.getElementById('music-cover').src = cover;
-                document.getElementById('music-userid').textContent = `Usuário ID: ${userId}`;
+
+                // Buscar o nome do usuário pelo userId
+                fetchUserName(userId).then((userName) => {
+                    document.getElementById('music-username').textContent = `Por: ${userName}`;
+                });
 
                 // Exibir o modal
                 musicDataModal.classList.add("show");
@@ -79,7 +80,7 @@ window.onload = async function() {
     } catch (error) {
         console.error('Erro ao buscar músicas:', error);
     }
-
+    
     // Fechar o modal de exibição de dados ao clicar no "X"
     closeModalBtn.addEventListener("click", () => {
         musicDataModal.classList.remove("show");
@@ -91,152 +92,44 @@ window.onload = async function() {
             musicDataModal.classList.remove("show");
         }
     };
-
-    // Mostrar o botão de upload
-    document.getElementById("openModalBtn").style.display = 'block';
-
-    document.getElementById("openModalBtn").addEventListener("click", function() {
-        const modal = document.getElementById("myModal");
-        modal.classList.add("show");
-        this.classList.add("disabled");
-    });
-
-    document.querySelector(".close").addEventListener("click", function() {
-        const modal = document.getElementById("myModal");
-        modal.classList.remove("show");
-        document.getElementById("openModalBtn").classList.remove("disabled");
-    });
-
-    window.onclick = function(event) {
-        const modal = document.getElementById("myModal");
-        if (event.target === modal) {
-            modal.classList.remove("show");
-            document.getElementById("openModalBtn").classList.remove("disabled");
-        }
-    };
-
-    const form = document.getElementById('upload-form');
-    const fileInput = document.getElementById('file-input');
-    const coverInput = document.getElementById('cover-input');
-    const coverPreview = document.getElementById('cover-preview');
-    const progressBar = document.getElementById('progress-bar');
-    const progressText = document.getElementById('progress-text');
-
-    // Adiciona o clique na capa para abrir o seletor de arquivos
-    coverPreview.addEventListener('click', () => {
-        coverInput.click();
-    });
-
-    coverInput.addEventListener('change', () => {
-        const file = coverInput.files[0];
-        const reader = new FileReader();
-        if (file) {
-            reader.onload = function(e) {
-                coverPreview.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
-        } else {
-            coverPreview.src = defaultCoverUrl; // Retorna para a capa padrão se não houver arquivo
-        }
-    });
-
-    // Adiciona um ouvinte de eventos para o formulário
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const user = auth.currentUser;
-
-        if (!user) {
-            window.location.href = 'login.html';
-            return;
-        }
-
-        const file = fileInput.files[0];
-        const cover = coverInput.files[0];
-        const title = document.getElementById('title-input').value;
-        const musicType = document.getElementById('music-input').value; // Obter o tipo da música
-        const bpm = document.getElementById('bpm-input').value;
-        const note = document.getElementById('note-input').value;
-        const scale = document.getElementById('scale-input').value;
-        const rawPrice = document.getElementById('price-input').value;
-        const pixKey = document.getElementById('pix-input').value;
-
-        const price = formatPrice(rawPrice);
-
-        if (file && (file.type === 'audio/mpeg' || file.type === 'audio/wav')) {
-            const uniqueId = Date.now().toString();
-            const storageRefMP3 = ref(storage, 'mp3/' + uniqueId + (file.type === 'audio/mpeg' ? '.mp3' : '.wav'));
-            const storageRefCover = ref(storage, 'covers/' + uniqueId + '.jpg');
-
-            const uploadTaskMP3 = uploadBytesResumable(storageRefMP3, file);
-            const uploadTaskCover = cover ? uploadBytesResumable(storageRefCover, cover) : uploadBytesResumable(storageRefCover, fetch(defaultCoverUrl).then(response => response.blob()));
-
-            uploadTaskMP3.on('state_changed', 
-                (snapshot) => {
-                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    progressBar.style.width = progress + '%';
-                    progressText.textContent = 'Progresso do upload: ' + Math.round(progress) + '%';
-                }, 
-                (error) => {
-                    console.error('Erro no upload do MP3:', error);
-                }, 
-                async () => {
-                    try {
-                        const downloadURLMP3 = await getDownloadURL(uploadTaskMP3.snapshot.ref);
-                        const downloadURLCover = cover ? await getDownloadURL(uploadTaskCover.snapshot.ref) : defaultCoverUrl;
-
-                        await addDoc(collection(firestore, 'uploads'), {
-                            mp3Url: downloadURLMP3,
-                            coverUrl: downloadURLCover,
-                            title: title,
-                            type: musicType,  // Salvando o tipo da música
-                            bpm: bpm,
-                            note: note,
-                            scale: scale,
-                            price: price,  // Preço formatado
-                            pixKey: pixKey,
-                            uniqueId: uniqueId,
-                            userId: user.uid,  // Armazena o ID do usuário
-                            timestamp: Date.now()
-                        });
-
-                        alert('Upload concluído!');
-                        form.reset();
-                        coverPreview.src = defaultCoverUrl; // Reseta para a capa padrão
-                        progressBar.style.width = '0%';
-                        progressText.textContent = 'Progresso do upload: 0%';
-                    } catch (error) {
-                        console.error('Erro ao salvar informações no Firestore:', error);
-                    }
-                }
-            );
-
-            uploadTaskCover.on('state_changed', 
-                null, 
-                (error) => {
-                    console.error('Erro no upload da capa:', error);
-                }
-            );
-        } else {
-            alert('Por favor, selecione um arquivo de áudio válido.');
-        }
-    });
-
-    const priceInput = document.getElementById('price-input');
-
-    // Adiciona um ouvinte de eventos para o campo de preço
-    priceInput.addEventListener('input', function(e) {
-        let value = e.target.value;
-
-        // Remove letras e formata o valor para R$
-        value = value.replace(/[^0-9]/g, ''); // Remove tudo que não é número
-        if (value) {
-            value = (parseFloat(value) / 100).toFixed(2); // Converte para formato de moeda
-            e.target.value = `R$ ${value.replace('.', ',')}`; // Atualiza o campo com a formatação
-        } else {
-            e.target.value = 'R$ 0,00'; // Valor padrão
-        }
-    });
 };
+
+// Função para buscar o nome do usuário com base no userId
+async function fetchUserName(userId) {
+    try {
+        const userDoc = await getDoc(doc(firestore, 'users', userId));
+        if (userDoc.exists()) {
+            const userData = userDoc.data();
+            return userData.name || "Usuário Desconhecido";
+        } else {
+            return "Usuário Desconhecido"; // Se o usuário não for encontrado
+        }
+    } catch (error) {
+        console.error("Erro ao buscar nome do usuário:", error);
+        return "Erro ao buscar usuário";
+    }
+}
+
+// Função para exibir notificações
+function showNotification(message, type = 'success') {
+    const notification = document.getElementById('notification');
+    notification.textContent = message;
+
+    // Limpar qualquer classe de tipo anterior
+    notification.classList.remove('success', 'error');
+
+    // Adicionar a classe correspondente ao tipo
+    if (type === 'success') {
+        notification.classList.add('success');
+    } else if (type === 'error') {
+        notification.classList.add('error');
+    }
+
+    notification.classList.remove('hidden'); // Mostra a notificação
+    setTimeout(() => {
+        notification.classList.add('hidden'); // Esconde após 3 segundos
+    }, 1000);
+}
 
 const bpmInput = document.getElementById('bpm-input');
 const bpmValueDisplay = document.getElementById('bpm-value');

@@ -8,11 +8,11 @@
     <title>MUKEKA</title>
     
     <!-- Import Firebase -->
-    <script type="module" src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js"></script>
-    <script type="module" src="https://www.gstatic.com/firebasejs/10.13.1/firebase-storage.js"></script>
-    <script type="module" src="https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js"></script>
-    <script type="module" src="https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js"></script>
-    <script type="module" src="./script.js" defer></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/11.0.2/firebase-storage.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js"></script>
+    <script type="module" src="./script.js" defer></script>    
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
 
 </head>
@@ -86,7 +86,7 @@
                 
                 <!-- Campo para preço -->
                 <label for="price-input">Preço:</label>
-                <input type="text" id="price-input" placeholder="R$ 00,00" required onblur="formatPrice()">
+                <input type="text" id="price-input" placeholder="R$ 00,00" ">
 
                 <!-- Campo para chave PIX -->
                 <label for="pix-input">Chave PIX:</label>
@@ -120,6 +120,7 @@
         <p id="music-username"></p> <!-- Exibe o nome do usuário -->
 
 
+
         
         <div id="music-cover-container">
             <img id="music-cover" src="" alt="Capa da música" class="cover-image-modal">
@@ -128,9 +129,10 @@
 </div>
 
 
-    <script>
-        // Atualiza o valor exibido do slider
-
-    </script>
+    <!-- Notificação -->
+    <div id="notification" class="hidden">
+        <span id="notification-message"></span>
+        <span class="close-btn">X</span>
+    </div>
 </body>
 </html>
