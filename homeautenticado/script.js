@@ -89,6 +89,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const userData = userDoc.data();
                 document.getElementById("perfil-name").textContent = userData.name || "N/A";
                 document.getElementById("perfil-email").textContent = user.email || "N/A";
+                document.getElementById("perfil-contact").textContent = userData.contact || "N/A";
             } else {
                 document.getElementById("perfil-info").textContent = "Informações de perfil não encontradas.";
             }
@@ -98,21 +99,48 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     };
 
-    // Fetch and Display Music
+    // Fetch and Display Music with randomization
     const fetchAndDisplayMusic = async () => {
         try {
             const querySnapshot = await getDocs(collection(firestore, 'uploads'));
-            querySnapshot.forEach((docSnapshot) => appendMusicItem(docSnapshot.data(), docSnapshot.id));
+            const musicData = [];
+            querySnapshot.forEach((docSnapshot) => {
+                musicData.push({ id: docSnapshot.id, ...docSnapshot.data() });
+            });
+
+            // Limita a 16 músicas e embaralha aleatoriamente
+            const limitedMusicData = musicData.slice(0, 16);
+            displayMusicList(shuffleArray(limitedMusicData));
+
+            // Atualiza a lista a cada 10 segundos com uma nova ordem aleatória
+            setInterval(() => {
+                displayMusicList(shuffleArray(limitedMusicData));
+            }, 10000);
         } catch (error) {
             console.error('Erro ao buscar músicas:', error);
         }
     };
 
+    // Função para exibir a lista de músicas
+    const displayMusicList = (musicData) => {
+        musicList.innerHTML = ''; // Limpa a lista antes de adicionar as músicas
+        musicData.forEach((data) => appendMusicItem(data));
+    };
+
+    // Função para embaralhar as músicas aleatoriamente
+    const shuffleArray = (array) => {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]]; // Troca os elementos
+        }
+        return array;
+    };
+
     // Append Music Item to List
-    const appendMusicItem = (data, id) => {
+    const appendMusicItem = (data) => {
         const musicItem = document.createElement('div');
         musicItem.className = 'music-item';
-        musicItem.dataset.id = id;
+        musicItem.dataset.id = data.id;
 
         const coverImage = document.createElement('img');
         coverImage.src = data.coverUrl || defaultCoverUrl;
@@ -123,7 +151,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         musicItem.appendChild(coverImage);
         musicList.appendChild(musicItem);
     };
-
     // Display Music Details in Modal
     const displayMusicDetails = (data) => {
         document.getElementById('music-title').textContent = data.title;
@@ -139,6 +166,10 @@ document.addEventListener("DOMContentLoaded", async () => {
             document.getElementById('music-username').textContent = `Por: ${userName}`;
         });
 
+        fetchUserContact(data.userId).then((userContact) => {
+            document.getElementById('music-contact').textContent = `Contato: ${userContact}`;
+        });
+
         musicDataModal.classList.add("show");
     };
 
@@ -150,6 +181,17 @@ document.addEventListener("DOMContentLoaded", async () => {
         } catch (error) {
             console.error("Erro ao buscar nome do usuário:", error);
             return "Erro ao buscar usuário";
+        }
+    };
+
+    // Fetch User Contact by ID
+    const fetchUserContact = async (userId) => {
+        try {
+            const userDoc = await getDoc(doc(firestore, 'users', userId));
+            return userDoc.exists() ? userDoc.data().contact || "Contato não disponível" : "Contato não encontrado";
+        } catch (error) {
+            console.error("Erro ao buscar contato do usuário:", error);
+            return "Erro ao buscar contato";
         }
     };
 
@@ -174,7 +216,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         event.preventDefault();
 
         const user = auth.currentUser;
-        if (!user) return alert('Por favor, faça login antes de enviar.');
+        if (!user) return showNotification('Por favor, faça login antes de enviar.', 'error');
 
         const fileInput = document.getElementById('file-input');
         const coverInput = document.getElementById('cover-input');
@@ -187,7 +229,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const pixKey = document.getElementById('pix-input').value;
 
         if (!fileInput.files[0] || !['audio/mpeg', 'audio/wav'].includes(fileInput.files[0].type)) {
-            return alert('Por favor, selecione um arquivo de áudio válido.');
+            return showNotification('Por favor, selecione um arquivo de áudio válido.', 'error');
         }
 
         const uniqueId = Date.now().toString();
@@ -221,11 +263,11 @@ document.addEventListener("DOMContentLoaded", async () => {
                 coverUrl,
             });
 
-            alert('Música enviada com sucesso!');
+            showNotification('Música enviada com sucesso!', 'sucess');
             window.location.reload();
         } catch (error) {
             console.error("Erro ao enviar música:", error);
-            alert('Erro ao enviar a música.');
+            showNotification('Erro ao enviar a música.', 'error');
         }
     };
 
@@ -233,6 +275,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const enableEditMode = () => {
         document.getElementById("perfil-name").contentEditable = true;
         document.getElementById("perfil-email").contentEditable = true;
+        document.getElementById("perfil-contact").contentEditable = true;
         document.getElementById("save-btn").style.display = "inline-block";
         document.getElementById("edit-btn").style.display = "none";
     };
@@ -242,9 +285,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         const user = auth.currentUser;
         const newName = document.getElementById("perfil-name").textContent;
         const newEmail = document.getElementById("perfil-email").textContent;
+        const newContact = document.getElementById("perfil-contact").textContent;
 
         if (!user) {
-            alert("Usuário não autenticado.");
+            showNotification("Usuário não autenticado.", 'error');
             return;
         }
 
@@ -252,21 +296,23 @@ document.addEventListener("DOMContentLoaded", async () => {
             const userRef = doc(firestore, "users", user.uid);
             await updateDoc(userRef, {
                 name: newName,
-                email: newEmail
+                email: newEmail,
+                contact: newContact
             });
 
             // Atualiza a UI
             document.getElementById("perfil-name").textContent = newName;
             document.getElementById("perfil-email").textContent = newEmail;
+            document.getElementById("perfil-contact").textContent = newContact;
 
             // Finaliza edição
             document.getElementById("save-btn").style.display = "none";
             document.getElementById("edit-btn").style.display = "inline-block";
 
-            alert("Perfil atualizado com sucesso!");
+            showNotification("Perfil atualizado com sucesso!", 'sucess');
         } catch (error) {
             console.error("Erro ao salvar alterações:", error);
-            alert("Erro ao salvar perfil.");
+            showNotification("Erro ao salvar perfil.", 'error');
         }
     };
 
@@ -277,4 +323,47 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("edit-btn").addEventListener("click", enableEditMode);
     document.getElementById("save-btn").addEventListener("click", saveProfileChanges);
     fetchAndDisplayMusic();
+
+        // Set up buttons to force randomization (using left and right arrows)
+        const randomizeLeftButton = document.getElementById('randomize-left');
+        const randomizeRightButton = document.getElementById('randomize-right');
+        
+        // Adicionando eventos para as setas
+        randomizeLeftButton.addEventListener('click', () => {
+            fetchAndDisplayMusic();
+        });
+    
+        randomizeRightButton.addEventListener('click', () => {
+            fetchAndDisplayMusic();
+        });
+        
+
+    // Função para exibir notificações
+    function showNotification(message, type = 'success') {
+        const notification = document.getElementById('notification');
+        notification.textContent = message;
+    
+            // Limpar qualquer classe de tipo anterior
+            notification.classList.remove('success', 'error');
+    
+            // Adicionar a classe correspondente ao tipo
+            if (type === 'success') {
+                notification.classList.add('success');
+            } else if (type === 'error') {
+                notification.classList.add('error');
+            }
+        
+    
+    
+    
+        notification.classList.remove('hidden'); // Mostra a notificação
+        setTimeout(() => {
+            notification.classList.add('hidden'); // Esconde após 3 segundos
+        }, 1000);
+    }
+
+    
+        
 });
+
+

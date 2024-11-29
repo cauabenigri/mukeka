@@ -259,7 +259,7 @@ loginForm.addEventListener('submit', async (e) => {
         console.error('Erro ao fazer login:', error);
         showNotification('Falha no login. Tente novamente.', 'error');
     }
-});
+});s
 
 
 

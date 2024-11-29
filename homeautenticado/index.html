@@ -22,8 +22,22 @@
         <button id="openModalBtn" aria-label="Upload">Upload</button>
         <button id="openPerfil" aria-label="Perfil">Perfil</button>
     </header>
+
+
+
     <main>
+
+        <div class="search-container">
+            <input type="text" placeholder="Preferencie palavras-chave..." class="search-box">
+        </div>
+
+        <div class="music-list-container">
+            <div class="randomize-controls">
+                <button id="randomize-left">	&#9664;</button> <!-- seta esquerda -->
+                <button id="randomize-right">&#9654;</button> <!-- seta direita -->
+            </div>
         <div id="music-list"></div>
+    
     </main>
 
     <!-- Upload -->
@@ -119,8 +133,12 @@
         <p><strong>Escala:</strong> <span id="music-scale"></span></p>
         <p><strong>Preço:</strong> <span id="music-price"></span></p>
         <p><strong>Chave PIX:</strong> <span id="music-pix-key"></span></p>
+
         <p id="music-userid"></p> <!-- Exibe o userId -->
         <p id="music-username"></p> <!-- Exibe o nome do usuário -->
+        <p id="music-contact"></p> <!-- Exibe o contato do usuário -->
+
+        
 
 
 
@@ -133,22 +151,27 @@
 
 
     <!-- Perfil modal-->
-    <div id="perfilModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Perfil</h2>
-            <p><strong>Nome:</strong> <span id="perfil-name">Carregando...</span></p>
-            <p><strong>Email:</strong> <span id="perfil-email">Carregando...</span></p>
-            <button id="edit-btn">Editar</button>
-            <button id="save-btn" style="display: none;">Salvar</button>
+<div id="perfilModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Editar</h2>
+        <div id="perfil-info">
+            <p><strong>Nome:</strong> <span id="perfil-name"></span></p>
+            <p><strong>Email:</strong> <span id="perfil-email"></span></p>
+            <p><strong>Contato:</strong> <span id="perfil-contact"></span></p>
+
         </div>
+        <button id="edit-btn">Editar</button>
+        <button id="save-btn" style="display:none;">Salvar</button>
     </div>
+</div>
+
 
 
     <!-- Notificação -->
     <div id="notification" class="hidden">
         <span id="notification-message"></span>
-        <span class="close-btn">X</span>
+
     </div>
 </body>
 </html>
