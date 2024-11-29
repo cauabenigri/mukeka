@@ -1,8 +1,17 @@
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js';
-import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-storage.js';
-import { getFirestore, doc, getDoc, collection, getDocs, addDoc } from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js';
-import { getAuth, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js';
+import { 
+    initializeApp 
+} from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js';
+import { 
+    getStorage, ref, uploadBytesResumable, getDownloadURL 
+} from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-storage.js';
+import { 
+    getFirestore, doc, getDoc, collection, getDocs, addDoc, updateDoc 
+} from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js';
+import { 
+    getAuth 
+} from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js';
 
+// Firebase Configuration
 const firebaseConfig = {
     apiKey: "AIzaSyD_3Uto71G3THDD3FZu_XOceGOanCz47sw",
     authDomain: "mukekajasko.firebaseapp.com",
@@ -12,138 +21,260 @@ const firebaseConfig = {
     appId: "1:436758047827:web:6d794e8ff85f7c7bf46aa6"
 };
 
+// Firebase Initialization
 const app = initializeApp(firebaseConfig);
 const storage = getStorage(app);
 const firestore = getFirestore(app);
 const auth = getAuth(app);
 
+// Default Cover Image URL
 const defaultCoverUrl = 'https://firebasestorage.googleapis.com/v0/b/mukekajasko.appspot.com/o/covers%2Fdefault.jpg?alt=media';
 
-window.onload = async function() {
+// DOM Content Loaded Event
+document.addEventListener("DOMContentLoaded", async () => {
     const musicList = document.getElementById('music-list');
     const musicDataModal = document.getElementById("musicDataModal");
-    const closeModalBtn = musicDataModal.querySelector(".close");
+    const uploadModal = document.getElementById("myModal");
+    const perfilModal = document.getElementById("perfilModal");
+    const progressBar = document.getElementById('progress-bar');
+    const coverPreview = document.getElementById('cover-preview');
+    const bpmValueDisplay = document.getElementById('bpm-value');
+    const bpmInput = document.getElementById('bpm-input');
 
-    try {
-        const querySnapshot = await getDocs(collection(firestore, 'uploads'));
-
-        querySnapshot.forEach(async (docSnapshot) => {
-            const data = docSnapshot.data(); // Pega os dados diretamente
-            const coverUrl = data.coverUrl || 'https://via.placeholder.com/150';
-            const audioUrl = data.mp3Url || data.wavUrl;
-
-            const musicItem = document.createElement('div');
-            musicItem.classList.add('music-item');
-
-            const coverImage = document.createElement('img');
-            coverImage.src = coverUrl;
-            coverImage.classList.add('cover-image');
-            coverImage.dataset.audioUrl = audioUrl;
-            musicItem.appendChild(coverImage);
-
-            // Adiciona o ID da música como atributo data-id
-            musicItem.setAttribute('data-id', docSnapshot.id);  // Usando docSnapshot.id diretamente
-
-            musicItem.addEventListener('click', () => {
-                // Carregar os dados da música no modal
-                const title = data.title;
-                const type = data.type;  // Acesse o tipo de música
-                const bpm = data.bpm;
-                const note = data.note;
-                const scale = data.scale;
-                const price = data.price;
-                const pixKey = data.pixKey;
-                const cover = data.coverUrl || 'https://via.placeholder.com/150';
-                const userId = data.userId;  // Obtém o userId da música
-
-                // Preenche os dados no modal
-                document.getElementById('music-title').textContent = title;
-                document.getElementById('music-type').textContent = type;  // Exibe o tipo de música
-                document.getElementById('music-bpm').textContent = bpm;
-                document.getElementById('music-note').textContent = note;
-                document.getElementById('music-scale').textContent = scale;
-                document.getElementById('music-price').textContent = price;
-                document.getElementById('music-pix-key').textContent = pixKey;
-                document.getElementById('music-cover').src = cover;
-
-                // Buscar o nome do usuário pelo userId
-                fetchUserName(userId).then((userName) => {
-                    document.getElementById('music-username').textContent = `Por: ${userName}`;
-                });
-
-                // Exibir o modal
-                musicDataModal.classList.add("show");
-            });
-
-            musicList.appendChild(musicItem);
-        });
-    } catch (error) {
-        console.error('Erro ao buscar músicas:', error);
-    }
-    
-    // Fechar o modal de exibição de dados ao clicar no "X"
-    closeModalBtn.addEventListener("click", () => {
-        musicDataModal.classList.remove("show");
+    // Autenticação do Usuário
+    auth.onAuthStateChanged((user) => {
+        if (!user) {
+            // Redireciona para a página de login se o usuário não estiver autenticado
+            window.location.href = '../home/index.html';
+        } else {
+            console.log(`Usuário autenticado: ${user.email}`);
+        }
     });
 
-    // Fechar o modal se o usuário clicar fora do modal
-    window.onclick = function(event) {
-        if (event.target === musicDataModal) {
-            musicDataModal.classList.remove("show");
+    // Modal Setup
+    const setupModals = () => {
+        const closeModal = (modal) => modal.classList.remove("show");
+        const openModal = (modal) => modal.classList.add("show");
+
+        document.getElementById("openModalBtn").addEventListener("click", () => openModal(uploadModal));
+        uploadModal.querySelector(".close").addEventListener("click", () => closeModal(uploadModal));
+        musicDataModal.querySelector(".close").addEventListener("click", () => closeModal(musicDataModal));
+
+        // Configuração do modal de perfil
+        const openPerfilBtn = document.getElementById("openPerfil");
+        openPerfilBtn.addEventListener("click", () => {
+            openModal(perfilModal);
+            fetchPerfilInfo(); // Função para carregar dados do perfil
+        });
+
+        perfilModal.querySelector(".close").addEventListener("click", () => closeModal(perfilModal));
+
+        window.addEventListener("click", (event) => {
+            if (event.target === musicDataModal) closeModal(musicDataModal);
+            if (event.target === perfilModal) closeModal(perfilModal);
+        });
+    };
+
+    // Função para buscar informações do perfil
+    const fetchPerfilInfo = async () => {
+        const user = auth.currentUser;
+        if (!user) {
+            document.getElementById("perfil-info").textContent = "Usuário não autenticado.";
+            return;
+        }
+
+        try {
+            const userDoc = await getDoc(doc(firestore, "users", user.uid));
+            if (userDoc.exists()) {
+                const userData = userDoc.data();
+                document.getElementById("perfil-name").textContent = userData.name || "N/A";
+                document.getElementById("perfil-email").textContent = user.email || "N/A";
+            } else {
+                document.getElementById("perfil-info").textContent = "Informações de perfil não encontradas.";
+            }
+        } catch (error) {
+            console.error("Erro ao carregar perfil:", error);
+            document.getElementById("perfil-info").textContent = "Erro ao carregar informações do perfil.";
         }
     };
-};
 
-// Função para buscar o nome do usuário com base no userId
-async function fetchUserName(userId) {
-    try {
-        const userDoc = await getDoc(doc(firestore, 'users', userId));
-        if (userDoc.exists()) {
-            const userData = userDoc.data();
-            return userData.name || "Usuário Desconhecido";
-        } else {
-            return "Usuário Desconhecido"; // Se o usuário não for encontrado
+    // Fetch and Display Music
+    const fetchAndDisplayMusic = async () => {
+        try {
+            const querySnapshot = await getDocs(collection(firestore, 'uploads'));
+            querySnapshot.forEach((docSnapshot) => appendMusicItem(docSnapshot.data(), docSnapshot.id));
+        } catch (error) {
+            console.error('Erro ao buscar músicas:', error);
         }
-    } catch (error) {
-        console.error("Erro ao buscar nome do usuário:", error);
-        return "Erro ao buscar usuário";
-    }
-}
+    };
 
-// Função para exibir notificações
-function showNotification(message, type = 'success') {
-    const notification = document.getElementById('notification');
-    notification.textContent = message;
+    // Append Music Item to List
+    const appendMusicItem = (data, id) => {
+        const musicItem = document.createElement('div');
+        musicItem.className = 'music-item';
+        musicItem.dataset.id = id;
 
-    // Limpar qualquer classe de tipo anterior
-    notification.classList.remove('success', 'error');
+        const coverImage = document.createElement('img');
+        coverImage.src = data.coverUrl || defaultCoverUrl;
+        coverImage.className = 'cover-image';
+        coverImage.dataset.audioUrl = data.mp3Url || data.wavUrl;
+        coverImage.addEventListener('click', () => displayMusicDetails(data));
 
-    // Adicionar a classe correspondente ao tipo
-    if (type === 'success') {
-        notification.classList.add('success');
-    } else if (type === 'error') {
-        notification.classList.add('error');
-    }
+        musicItem.appendChild(coverImage);
+        musicList.appendChild(musicItem);
+    };
 
-    notification.classList.remove('hidden'); // Mostra a notificação
-    setTimeout(() => {
-        notification.classList.add('hidden'); // Esconde após 3 segundos
-    }, 1000);
-}
+    // Display Music Details in Modal
+    const displayMusicDetails = (data) => {
+        document.getElementById('music-title').textContent = data.title;
+        document.getElementById('music-type').textContent = data.type;
+        document.getElementById('music-bpm').textContent = data.bpm;
+        document.getElementById('music-note').textContent = data.note;
+        document.getElementById('music-scale').textContent = data.scale;
+        document.getElementById('music-price').textContent = data.price;
+        document.getElementById('music-pix-key').textContent = data.pixKey;
+        document.getElementById('music-cover').src = data.coverUrl || defaultCoverUrl;
 
-const bpmInput = document.getElementById('bpm-input');
-const bpmValueDisplay = document.getElementById('bpm-value');
+        fetchUserName(data.userId).then((userName) => {
+            document.getElementById('music-username').textContent = `Por: ${userName}`;
+        });
 
-bpmInput.addEventListener('input', function() {
-    bpmValueDisplay.textContent = this.value; // Atualiza o texto do BPM exibido
+        musicDataModal.classList.add("show");
+    };
+
+    // Fetch User Name by ID
+    const fetchUserName = async (userId) => {
+        try {
+            const userDoc = await getDoc(doc(firestore, 'users', userId));
+            return userDoc.exists() ? userDoc.data().name || "Usuário Desconhecido" : "Usuário Desconhecido";
+        } catch (error) {
+            console.error("Erro ao buscar nome do usuário:", error);
+            return "Erro ao buscar usuário";
+        }
+    };
+
+    // Cover Preview Setup
+    const setupCoverPreview = () => {
+        const coverInput = document.getElementById('cover-input');
+        coverPreview.addEventListener('click', () => coverInput.click());
+        coverInput.addEventListener('change', () => {
+            const file = coverInput.files[0];
+            const reader = new FileReader();
+            if (file) {
+                reader.onload = (e) => (coverPreview.src = e.target.result);
+                reader.readAsDataURL(file);
+            } else {
+                coverPreview.src = defaultCoverUrl;
+            }
+        });
+    };
+
+    // Handle Upload Form Submission
+    const uploadFormHandler = async (event) => {
+        event.preventDefault();
+
+        const user = auth.currentUser;
+        if (!user) return alert('Por favor, faça login antes de enviar.');
+
+        const fileInput = document.getElementById('file-input');
+        const coverInput = document.getElementById('cover-input');
+        const title = document.getElementById('title-input').value;
+        const type = document.getElementById('music-input').value;
+        const bpm = document.getElementById('bpm-input').value;
+        const note = document.getElementById('note-input').value;
+        const scale = document.getElementById('scale-input').value;
+        const price = document.getElementById('price-input').value;
+        const pixKey = document.getElementById('pix-input').value;
+
+        if (!fileInput.files[0] || !['audio/mpeg', 'audio/wav'].includes(fileInput.files[0].type)) {
+            return alert('Por favor, selecione um arquivo de áudio válido.');
+        }
+
+        const uniqueId = Date.now().toString();
+        const mp3Ref = ref(storage, `mp3/${uniqueId}.${fileInput.files[0].type === 'audio/mpeg' ? 'mp3' : 'wav'}`);
+        const coverRef = ref(storage, `covers/${uniqueId}.jpg`);
+        const coverFile = coverInput.files[0] || await fetch(defaultCoverUrl).then((res) => res.blob());
+
+        try {
+            const mp3Upload = uploadBytesResumable(mp3Ref, fileInput.files[0]);
+            mp3Upload.on('state_changed', (snapshot) => {
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                progressBar.style.width = `${progress}%`;
+            });
+            await mp3Upload;
+
+            await uploadBytesResumable(coverRef, coverFile);
+
+            const mp3Url = await getDownloadURL(mp3Ref);
+            const coverUrl = await getDownloadURL(coverRef);
+
+            await addDoc(collection(firestore, 'uploads'), {
+                title,
+                type,
+                bpm,
+                note,
+                scale,
+                price,
+                pixKey,
+                userId: user.uid,
+                mp3Url,
+                coverUrl,
+            });
+
+            alert('Música enviada com sucesso!');
+            window.location.reload();
+        } catch (error) {
+            console.error("Erro ao enviar música:", error);
+            alert('Erro ao enviar a música.');
+        }
+    };
+
+    // Ativar edição do perfil
+    const enableEditMode = () => {
+        document.getElementById("perfil-name").contentEditable = true;
+        document.getElementById("perfil-email").contentEditable = true;
+        document.getElementById("save-btn").style.display = "inline-block";
+        document.getElementById("edit-btn").style.display = "none";
+    };
+
+    // Salvar alterações do perfil
+    const saveProfileChanges = async () => {
+        const user = auth.currentUser;
+        const newName = document.getElementById("perfil-name").textContent;
+        const newEmail = document.getElementById("perfil-email").textContent;
+
+        if (!user) {
+            alert("Usuário não autenticado.");
+            return;
+        }
+
+        try {
+            const userRef = doc(firestore, "users", user.uid);
+            await updateDoc(userRef, {
+                name: newName,
+                email: newEmail
+            });
+
+            // Atualiza a UI
+            document.getElementById("perfil-name").textContent = newName;
+            document.getElementById("perfil-email").textContent = newEmail;
+
+            // Finaliza edição
+            document.getElementById("save-btn").style.display = "none";
+            document.getElementById("edit-btn").style.display = "inline-block";
+
+            alert("Perfil atualizado com sucesso!");
+        } catch (error) {
+            console.error("Erro ao salvar alterações:", error);
+            alert("Erro ao salvar perfil.");
+        }
+    };
+
+    // Inicialização
+    setupModals();
+    setupCoverPreview();
+    document.getElementById('upload-form').addEventListener('submit', uploadFormHandler);
+    document.getElementById("edit-btn").addEventListener("click", enableEditMode);
+    document.getElementById("save-btn").addEventListener("click", saveProfileChanges);
+    fetchAndDisplayMusic();
 });
-
-function formatPrice(value) {
-    value = value.replace(/[^0-9]/g, ''); // Remove tudo que não é número
-    if (value) {
-        value = (parseFloat(value) / 100).toFixed(2); // Converte para formato de moeda
-        return `R$ ${value.replace('.', ',')}`; // Retorna o preço formatado
-    } else {
-        return 'R$ 0,00'; // Valor padrão
-    }
-}

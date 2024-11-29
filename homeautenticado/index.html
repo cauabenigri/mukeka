@@ -20,12 +20,13 @@
     <header>
         <h1 id="header-text">Mukeka</h1>
         <button id="openModalBtn" aria-label="Upload">Upload</button>
+        <button id="openPerfil" aria-label="Perfil">Perfil</button>
     </header>
     <main>
         <div id="music-list"></div>
     </main>
 
-    <!-- O Modal -->
+    <!-- Upload -->
     <div id="myModal" class="modal">
         <div class="modal-content">
             <span class="close" aria-label="Fechar">&times;</span>
@@ -34,17 +35,17 @@
                 <h2>Enviar</h2>
                 
                 <label for="file-input" id="file-input-label">Insira aqui um arquivo de áudio</label>
-                <input type="file" id="file-input" accept=".mp3, .wav" required>
+                <input type="file" id="file-input" accept=".mp3, .wav">
                 
                 <label for="cover-input" id="cover-input-label">Insira aqui um arquivo de capa</label>
                 <input type="file" id="cover-input" accept="image/*">
                 
                 <!-- Campo para título -->
                 <label for="title-input">Título:</label>
-                <input type="text" id="title-input" required>
+                <input type="text" id="title-input">
 
                 <label for="music-input">Tipo de Música:</label>
-                <select id="music-input" required>
+                <select id="music-input">
                     <option value="">Selecione o tipo de música</option>
                     <option value="Vocal">Vocal</option>
                     <option value="Instrumental">Instrumental</option>
@@ -85,8 +86,10 @@
                 </select>
                 
                 <!-- Campo para preço -->
-                <label for="price-input">Preço:</label>
-                <input type="text" id="price-input" placeholder="R$ 00,00" ">
+<!-- Campo para preço -->
+<label for="price-input">Preço:</label>
+<input type="number" id="price-input" placeholder="R$ 00,00" step="0.01" min="0">
+
 
                 <!-- Campo para chave PIX -->
                 <label for="pix-input">Chave PIX:</label>
@@ -127,6 +130,19 @@
         </div>
     </div>
 </div>
+
+
+    <!-- Perfil modal-->
+    <div id="perfilModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Perfil</h2>
+            <p><strong>Nome:</strong> <span id="perfil-name">Carregando...</span></p>
+            <p><strong>Email:</strong> <span id="perfil-email">Carregando...</span></p>
+            <button id="edit-btn">Editar</button>
+            <button id="save-btn" style="display: none;">Salvar</button>
+        </div>
+    </div>
 
 
     <!-- Notificação -->

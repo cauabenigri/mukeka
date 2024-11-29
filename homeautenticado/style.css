@@ -1,4 +1,8 @@
-/* Reset e configuração inicial */
+/* ================================
+   Reset e Configuração Inicial
+================================= */
+
+/* Resetando margens e padding do HTML e body */
 html, body {
     margin: 0;
     padding: 0;
@@ -11,7 +15,9 @@ html, body {
     align-items: center;
 }
 
-/* Fonte personalizada */
+/* ================================
+   Fonte Personalizada (OldLondon)
+================================= */
 @font-face {
     font-family: 'OldLondon';
     src: url('OldLondon.ttf') format('truetype');
@@ -19,399 +25,156 @@ html, body {
     font-style: normal;
 }
 
-/* Estilo do título */
+/* ================================
+   Estilos de Títulos e Cabeçalhos
+================================= */
+
+/* Estilo do título principal */
 h1 {
-    font-size: calc(4rem + 4vw); /* Ajusta o tamanho da fonte de acordo com a largura da janela */
+    font-size: calc(4rem + 4vw); /* Tamanho responsivo com base na largura da tela */
     text-align: center;
-    margin: 5vmin 0 2rem 0; /* Espaço acima e abaixo do título */
-    max-width: 90%; /* Limita a largura máxima do título */
-    z-index: 10; 
-    line-height: 1.1; /* Ajusta o espaçamento entre linhas se necessário */
+    margin: 5vmin 0 2rem 0; /* Espaços acima e abaixo do título */
+    max-width: 90%; /* Limita a largura do título */
+    z-index: 10;
+    line-height: 1.1; /* Ajusta a altura da linha */
     user-select: none; /* Bloqueia a seleção de texto */
 }
 
-/* Layout do header */
+/* ================================
+   Layout do Cabeçalho e Botões
+================================= */
+
+/* Header com centralização do título */
 header {
     width: 100%;
     display: flex;
     justify-content: center;
+    user-select: none; /* Bloqueia a seleção de texto */
 }
 
-/* Configuração das capas das músicas */
-#music-list {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr); /* Sempre 4 colunas */
-    gap: 10px; /* Reduz o espaço entre as capas */
-    padding: 20px;
-    width: 100%;
-    max-width: 960px; /* Reduz a largura máxima para ajustar as capas */
-    box-sizing: border-box; /* Inclui padding e border na largura total */
-}
-
-/* Estilo das músicas */
-.music-item {
-    width: 100%;
-    max-width: 150px; /* Limita a largura máxima do item */
-    aspect-ratio: 1 / 1; /* Mantém a proporção quadrada */
-    position: relative;
-    box-sizing: border-box; /* Inclui padding e border na largura total */
-    overflow: hidden; /* Garante que o conteúdo não ultrapasse os limites do item */
-}
-
-/* Estilo das imagens de capa */
-.cover-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 8px;
-    transition: opacity 0.3s, transform 0.3s; /* Adiciona transição para o efeito de hover */
-    display: block; /* Remove espaço extra abaixo da imagem */
-    cursor: pointer; /* Adiciona cursor pointer para indicar que a imagem é clicável */
-}
-
-/* Efeito hover */
-.cover-image:hover {
-    opacity: 0.8; /* Ajuste a opacidade no hover se desejar */
-    transform: scale(1.05); /* Aumenta a imagem um pouco no hover para um efeito de destaque */
-}
-
-.cover-image.playing {
-    opacity: 0.7; /* Opacidade quando a capa está tocando */
-}
-
-/* Ocultar o player de áudio */
-.audio-player {
-    display: none;
-}
-
-/* Estilo para o botão */
-#openModalBtn {
+/* Estilos para os botões de abrir modal e perfil */
+#openModalBtn, #openPerfil {
     font-family: 'OldLondon';
     position: absolute;
     top: 10px;
-    right: 20px;
-    padding: 0.1px 0.1px; /* Padding fixo para manter o tamanho do botão */
-    font-size: calc(1.5vw + 1rem); /* Ajusta o tamanho da fonte responsivamente, com um valor mínimo */
-
+    padding: 0.1px 0.1px;
+    font-size: calc(1.5vw + 1rem); /* Tamanho de fonte responsivo */
     cursor: pointer;
     background-color: #000000;
     color: #fff;
     border: none;
     border-radius: 4px;
     transition: background-color 0.3s ease;
+
+
+    
 }
 
-#openModalBtn:hover {
-    transition: 0.5s;
+#openModalBtn {
+    right: 20px;
+}
+
+#openPerfil {
+    left: 20px;
+}
+
+/* Efeito de hover nos botões */
+#openModalBtn:hover, #openPerfil:hover {
     color: #4caf50; /* Cor do texto ao passar o mouse */
 }
 
-/* Estilo para o modal */
+/* ================================
+   Estilo da Lista de Músicas
+================================= */
+
+/* Layout da lista de músicas com capas */
+#music-list {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 colunas */
+    gap: 10px; /* Espaçamento entre as capas */
+    padding: 20px;
+    width: 100%;
+    max-width: 960px; /* Limita a largura da lista */
+    box-sizing: border-box;
+}
+
+/* Estilo de cada item de música (capa) */
+.music-item {
+    width: 100%;
+    max-width: 150px; /* Limita a largura do item */
+    aspect-ratio: 1 / 1; /* Mantém a proporção quadrada */
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+/* Estilo das imagens de capa */
+.cover-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* A imagem vai cobrir a área disponível */
+    border-radius: 8px;
+    transition: opacity 0.3s, transform 0.3s; /* Transição para efeitos de hover */
+    cursor: pointer; /* Indica que a imagem é clicável */
+}
+
+/* Efeito hover nas imagens de capa */
+.cover-image:hover {
+    opacity: 0.8; /* Diminui a opacidade ao passar o mouse */
+    transform: scale(1.05); /* Leve aumento no tamanho da imagem */
+}
+
+/* Efeito de capa tocando */
+.cover-image.playing {
+    opacity: 0.7; /* Diminui a opacidade da capa tocando */
+}
+
+/* ================================
+   Estilo do Player de Áudio
+================================= */
+
+/* Ocultar o player de áudio (será exibido ao clicar na capa) */
+.audio-player {
+    display: none;
+}
+
+/* ================================
+   Estilos do Modal
+================================= */
+
+/* Estilo do modal, inicialmente oculto */
 .modal {
-    display: none; /* Esconde o modal por padrão */
+    display: none;
     position: fixed;
     z-index: 1;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    overflow: hidden;
-    background-color: rgba(0, 0, 0, 0.5); /* Cor de fundo escura com opacidade */
-    justify-content: center; /* Centraliza horizontalmente */
-    align-items: center; /* Centraliza verticalmente */
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.modal.show {
-    display: flex;
-    opacity: 1;
-}
-
-/* Estilo para o conteúdo do modal */
-.modal-content {
-    background-color: #000000;
-    width: 400px; /* Largura do modal */
-    height: auto; /* Ajusta a altura para acomodar o conteúdo */
-    border-radius: 8px; /* Bordas arredondadas */
-    position: relative; /* Para posicionar o botão de fechar e a barra de progresso */
-    padding: 20px;
-    box-shadow: 0px 8px 8px rgba(65, 42, 42, 0.2);
-    color: #fff;
-    padding-right: 120px; /* Ajuste o espaço à direita para a capa */
-}
-
-/* Estilo para a capa dentro do modal */
-.cover-image-modal {
-    position: absolute;
-    top: 30px;
-    right: 50px;
-    width: 140px;
-    height: 140px;
-    object-fit: cover;
-    border-radius: 8px; /* Arredonda os cantos da capa */
-}
-
-/* Estilo para o título do modal */
-.modal-content h2 {
-    margin: 0; /* Remove a margem padrão */
-    padding: 0; /* Remove o padding padrão */
-    font-size: 3em; /* Ajuste o tamanho da fonte conforme necessário */
-    text-align: left; /* Alinhamento do texto do título */
-    margin-bottom: 20px; /* Adiciona um espaço abaixo do título */
-}
-
-/* Estilo para o formulário dentro do modal */
-#upload-form {
-    display: flex;
-    flex-direction: column;
-    gap: 5px; /* Espaço entre os elementos do formulário */
-}
-
-/* Estilo para o botão de fechar */
-.close {
-    color: #ffffff;
-    position: absolute;
-    top: 5px;
-    right: 13px;
-    font-size: 24px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.close:hover,
-.close:focus {
-    color: rgb(173, 173, 173);
-    text-decoration: none;
-}
-
-/* Estilo para os rótulos dos inputs */
-#file-input-label, #cover-input-label {
-    font-size: 25px;
-    color: #fff; /* Cor do texto dos rótulos */
-    cursor: pointer; /* Cursor de ponteiro ao passar o mouse */
-    text-align: left;
-    transition: color 0.3s ease; /* Transição suave para a cor do texto */
-    display: block; /* Ajusta o tamanho do botão ao conteúdo */
-    margin: 0px; /* Remove qualquer margem extra */
-    padding: 0px; /* Remove o padding */
-    position: relative; /* Necessário para ajustar com top */
-    top: -10px; /* Ajuste este valor conforme necessário para mover os rótulos para cima */
-    left: 0px; /* Distância da borda esquerda do modal */
-}
-
-/* Estilo para os rótulos dos inputs ao passar o mouse */
-#file-input-label:hover, #cover-input-label:hover, #upload-button-label:hover {
-    color: #4caf50; /* Cor do texto ao passar o mouse */
-    cursor: pointer;
-}
-
-/* Estilo para os inputs ocultos */
-#file-input, #cover-input {
-    display: none; /* Esconde os campos de input */
-}
-
-#upload-button-label {
-    font-family: 'OldLondon', sans-serif; /* Aplica a mesma fonte usada no <label> */
-    font-size: 25px; /* Tamanho do texto do botão, igual ao <label> */
-    color: #fff; /* Cor do texto */
-    background-color: transparent; /* Sem fundo para se parecer com o <label> */
-    border: none; /* Remove bordas para se parecer com o <label> */
-    cursor: pointer; /* Cursor de ponteiro ao passar o mouse */
-    display: block; /* Faz o botão ocupar apenas o espaço necessário */
-    text-align: center; /* Centraliza o texto dentro do botão */
-    margin: 0; /* Remove margem */
-    padding: 0; /* Remove padding */
-    position: relative; /* Para posicionamento do botão */
-    transition: color 0.3s ease; /* Transição suave para a cor do texto */
-    left: 200px;
-    top: 14px;
-}
-
-/* Estilo para o contêiner de progresso */
-#progress-container {
-    position: absolute;
-    bottom: 20px; /* Distância do fundo do modal */
-    width: calc(50%); /* Ajusta a largura para levar em conta o padding do modal */
-    background-color: #333; /* Cor de fundo do contêiner */
-    border-radius: 4px; /* Bordas arredondadas do contêiner */
-    padding: 5px; /* Adiciona algum padding interno ao contêiner */
-}
-
-/* Estilo para a barra de progresso */
-#progress-bar {
-    height: 25px;
-    background-color: #4caf50; /* Cor de fundo da barra de progresso */
-    width: 0; /* Inicialmente, a largura é 0% */
-    border-radius: 4px; /* Bordas arredondadas da barra */
-}
-
-/* Media queries para ajustar o layout em dispositivos menores */
-@media (max-width: 768px) {
-    #upload-form {
-        max-width: calc(100% - 10px); /* Ajusta o max-width para telas muito pequenas */
-    }
-
-    #file-input-label, #cover-input-label {
-        font-size: 18px; /* Reduz ainda mais o tamanho da fonte dos rótulos */
-        padding: 0px 5px; /* Ajusta o padding para telas muito pequenas */
-    }
-
-    #upload-button-label {
-        font-size: 1em; /* Reduz o tamanho do texto do botão para telas muito pequenas */
-        bottom: -10px;
-        right: 20px; /* Ajusta a distância da borda direita para telas muito pequenas */
-    }
-}
-
-@media (max-width: 480px) {
-    #upload-form {
-        max-width: calc(100% - 10px); /* Ajusta o max-width para telas muito pequenas */
-    }
-
-    #file-input-label, #cover-input-label {
-        font-size: 18px; /* Reduz ainda mais o tamanho da fonte dos rótulos */
-        padding: 0px 5px; /* Ajusta o padding para telas muito pequenas */
-    }
-
-    #upload-button-label {
-        font-size: 1em; /* Reduz o tamanho do texto do botão para telas muito pequenas */
-        bottom: -10px;
-        right: 20px; /* Ajusta a distância da borda direita para telas muito pequenas */
-    }/* Reset e configuração inicial */
-html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    background-color: black;
-    color: white;
-    font-family: 'OldLondon', sans-serif;
-    display: flex;
-    flex-direction: column;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
     align-items: center;
-}
-
-/* Fonte personalizada */
-@font-face {
-    font-family: 'OldLondon';
-    src: url('OldLondon.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-}
-
-/* Layout do header */
-header {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    user-select: none; /* Bloqueia a seleção de texto */
-}
-
-/* Configuração das capas das músicas */
-#music-list {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr); /* Sempre 4 colunas */
-    gap: 10px; /* Reduz o espaço entre as capas */
-    padding: 20px;
-    width: 100%;
-    max-width: 960px; /* Reduz a largura máxima para ajustar as capas */
-    box-sizing: border-box; /* Inclui padding e border na largura total */
-}
-
-/* Estilo das músicas */
-.music-item {
-    width: 100%;
-    max-width: 150px; /* Limita a largura máxima do item */
-    aspect-ratio: 1 / 1; /* Mantém a proporção quadrada */
-    position: relative;
-    box-sizing: border-box; /* Inclui padding e border na largura total */
-    overflow: hidden; /* Garante que o conteúdo não ultrapasse os limites do item */
-}
-
-/* Estilo das imagens de capa */
-.cover-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 8px;
-    transition: opacity 0.3s, transform 0.3s; /* Adiciona transição para o efeito de hover */
-    display: block; /* Remove espaço extra abaixo da imagem */
-    cursor: pointer; /* Adiciona cursor pointer para indicar que a imagem é clicável */
-}
-
-/* Efeito hover */
-.cover-image:hover {
-    opacity: 0.8; /* Ajuste a opacidade no hover se desejar */
-    transform: scale(1.05); /* Aumenta a imagem um pouco no hover para um efeito de destaque */
-}
-
-.cover-image.playing {
-    opacity: 0.7; /* Opacidade quando a capa está tocando */
-}
-
-/* Ocultar o player de áudio */
-.audio-player {
-    display: none;
-}
-
-/* Estilo para o botão */
-#openModalBtn {
-    font-family: 'OldLondon';
-    position: absolute;
-    top: 10px;
-    right: 20px;
-    padding: 0.1px 0.1px; /* Padding fixo para manter o tamanho do botão */
-    font-size: calc(1.5vw + 1rem); /* Ajusta o tamanho da fonte responsivamente, com um valor mínimo */
-
-    cursor: pointer;
-    background-color: #000000;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
-}
-
-#openModalBtn:hover {
-    transition: 0.5s;
-    color: #4caf50; /* Cor do texto ao passar o mouse */
-}
-
-/* Estilo para o modal */
-.modal {
-    display: none; /* Esconde o modal por padrão */
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background-color: rgba(0, 0, 0, 0.5); /* Cor de fundo escura com opacidade */
-    justify-content: center; /* Centraliza horizontalmente */
-    align-items: center; /* Centraliza verticalmente */
     opacity: 0;
     transition: opacity 0.3s ease;
 }
 
 .modal.show {
     display: flex;
-    opacity: 1;
+    opacity: 1; /* Exibe o modal com transição */
 }
 
-/* Estilo para o conteúdo do modal */
+/* Conteúdo do modal */
 .modal-content {
     background-color: #000000;
-    width: 400px; /* Largura do modal */
-    height: auto; /* Ajusta a altura para acomodar o conteúdo */
-    border-radius: 8px; /* Bordas arredondadas */
-    position: relative; /* Para posicionar o botão de fechar e a barra de progresso */
+    width: 20%;
     padding: 20px;
-    box-shadow: 0px 8px 8px rgba(65, 42, 42, 0.2);
+    border-radius: 8px;
     color: #fff;
-    padding-right: 120px; /* Ajuste o espaço à direita para a capa */
+    position: relative;
+    box-shadow: 0px 8px 8px rgba(65, 42, 42, 0.2);
 }
 
-/* Estilo para a capa dentro do modal */
+/* Capa da música no modal */
 .cover-image-modal {
     position: absolute;
     top: 30px;
@@ -419,30 +182,25 @@ header {
     width: 140px;
     height: 140px;
     object-fit: cover;
-    border-radius: 8px; /* Arredonda os cantos da capa */
-    
+    border-radius: 8px;
 }
 
-
-
-
-/* Estilo para o título do modal */
+/* Título do modal */
 .modal-content h2 {
-    margin: 0; /* Remove a margem padrão */
-    padding: 0; /* Remove o padding padrão */
-    font-size: 3em; /* Ajuste o tamanho da fonte conforme necessário */
-    text-align: left; /* Alinhamento do texto do título */
-    margin-bottom: 20px; /* Adiciona um espaço abaixo do título */
+    margin: 0;
+    font-size: 3em;
+    text-align: left;
+    margin-bottom: 20px;
 }
 
-/* Estilo para o formulário dentro do modal */
+/* Formulário de upload dentro do modal */
 #upload-form {
     display: flex;
     flex-direction: column;
-    gap: 5px; /* Espaço entre os elementos do formulário */
+    gap: 5px;
 }
 
-/* Estilo para o botão de fechar */
+/* Botão de fechar o modal */
 .close {
     color: #ffffff;
     position: absolute;
@@ -453,151 +211,127 @@ header {
     cursor: pointer;
 }
 
-.close:hover,
-.close:focus {
-    color: rgb(173, 173, 173);
-    text-decoration: none;
+.close:hover, .close:focus {
+    color: rgb(173, 173, 173); /* Muda a cor ao passar o mouse */
 }
 
-/* Estilo para os rótulos dos inputs */
+/* ================================
+   Estilo para Inputs e Botões de Upload
+================================= */
+
+/* Rótulos de input (arquivo e capa) */
 #file-input-label, #cover-input-label {
     font-size: 25px;
-    color: #fff; /* Cor do texto dos rótulos */
-    cursor: pointer; /* Cursor de ponteiro ao passar o mouse */
-    text-align: left;
-    transition: color 0.3s ease; /* Transição suave para a cor do texto */
-    display: block; /* Faz os rótulos ocuparem o espaço necessário */
-    margin: 0px; /* Remove qualquer margem extra */
-    padding: 0px; /* Remove o padding */
-    position: relative; /* Necessário para ajustar com top */
-    top: -10px; /* Ajuste este valor conforme necessário para mover os rótulos para cima */
-    left: 0px; /* Distância da borda esquerda do modal */
-}
-
-/* Estilo para os rótulos dos inputs ao passar o mouse */
-#file-input-label:hover, #cover-input-label:hover, #upload-button-label:hover {
-    color: #4caf50; /* Cor do texto ao passar o mouse */
+    color: #fff;
     cursor: pointer;
+    text-align: left;
+    transition: color 0.3s ease;
+    display: block;
 }
 
-/* Estilo para os inputs ocultos */
+#file-input-label:hover, #cover-input-label:hover {
+    color: #4caf50; /* Cor ao passar o mouse */
+}
+
+/* Inputs de arquivo e capa (ocultos) */
 #file-input, #cover-input {
-    display: none; /* Esconde os campos de input */
+    display: none;
 }
 
+/* Botão de upload (visível no modal) */
 #upload-button-label {
-    font-family: 'OldLondon', sans-serif; /* Aplica a mesma fonte usada no <label> */
-    font-size: 25px; /* Tamanho do texto do botão, igual ao <label> */
-    color: #fff; /* Cor do texto */
-    background-color: transparent; /* Sem fundo para se parecer com o <label> */
-    border: none; /* Remove bordas para se parecer com o <label> */
-    cursor: pointer; /* Cursor de ponteiro ao passar o mouse */
-    display: block; /* Faz o botão ocupar apenas o espaço necessário */
-    text-align: center; /* Centraliza o texto dentro do botão */
-    margin: 0; /* Remove margem */
-    padding: 0; /* Remove padding */
-    position: relative; /* Para posicionamento do botão */
-    transition: color 0.3s ease; /* Transição suave para a cor do texto */
+    font-family: 'OldLondon', sans-serif;
+    font-size: 25px;
+    color: #fff;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    display: block;
+    text-align: center;
+    margin: 0;
+    position: relative;
+    transition: color 0.3s ease;
     left: 200px;
     top: 14px;
 }
 
-/* Estilo para o contêiner de progresso */
+/* Contêiner de progresso de upload */
 #progress-container {
     position: absolute;
-    bottom: 20px; /* Distância do fundo do modal */
-    width: calc(50%); /* Ajusta a largura para levar em conta o padding do modal */
-    background-color: #333; /* Cor de fundo do contêiner */
-    border-radius: 4px; /* Bordas arredondadas do contêiner */
-    padding: 5px; /* Adiciona algum padding interno ao contêiner */
+    bottom: 20px;
+    width: 50%;
+    background-color: #333;
+    border-radius: 4px;
+    padding: 5px;
 }
 
-/* Estilo para a barra de progresso */
+/* Barra de progresso */
 #progress-bar {
     height: 25px;
-    background-color: #4caf50; /* Cor de fundo da barra de progresso */
-    width: 0; /* Inicialmente, a largura é 0% */
-    border-radius: 4px; /* Bordas arredondadas da barra */
+    background-color: #4caf50;
+    width: 0;
+    border-radius: 4px;
 }
 
-/* Media queries para ajustar o layout em dispositivos menores */
+
+
+
+#perfilModal {
+    
+    top: 60px;
+    left: 20px;
+    width: 50%;
+    height: auto; /* Deixe a altura se ajustar conforme o conteúdo */
+    display: none;
+    
+
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+}
+
+#perfilModal.show {
+    display: block;
+}
+
+
+
+
+/* ================================
+   Media Queries para Responsividade
+================================= */
+
+/* Ajustes em telas menores (máximo 768px) */
 @media (max-width: 768px) {
     #upload-form {
-        max-width: calc(100% - 10px); /* Ajusta o max-width para telas muito pequenas */
+        max-width: 100%;
     }
 
     #file-input-label, #cover-input-label {
-        font-size: 18px; /* Reduz ainda mais o tamanho da fonte dos rótulos */
-        padding: 0px 5px; /* Ajusta o padding para telas muito pequenas */
+        font-size: 18px;
     }
 
     #upload-button-label {
-        font-size: 1em; /* Reduz o tamanho do texto do botão para telas muito pequenas */
+        font-size: 1em;
         bottom: -10px;
-        right: 20px; /* Ajusta a distância da borda direita para telas muito pequenas */
+        right: 20px;
     }
 }
 
+/* Ajustes para dispositivos muito pequenos (máximo 480px) */
 @media (max-width: 480px) {
     #upload-form {
-        max-width: calc(100% - 10px); /* Ajusta o max-width para telas muito pequenas */
+        max-width: 100%;
     }
 
     #file-input-label, #cover-input-label {
-        font-size: 18px; /* Reduz ainda mais o tamanho da fonte dos rótulos */
-        padding: 0px 5px; /* Ajusta o padding para telas muito pequenas */
+        font-size: 18px;
     }
 
     #upload-button-label {
-        font-size: 1em; /* Reduz o tamanho do texto do botão para telas muito pequenas */
+        font-size: 1em;
         bottom: -10px;
-        right: 20px; /* Ajusta a distância da borda direita para telas muito pequenas */
+        right: 20px;
     }
 }
 
-}
 
-
-#notification {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: black;  /* Cor padrão */
-    color: white;
-    padding: 40px 80px;    /* Aumentando o padding para aumentar o tamanho da caixa */
-    font-size: 2rem;        /* Aumentando o tamanho da fonte */
-    height: 150px;          /* Definindo uma altura fixa para a notificação */
-    display: flex;
-    align-items: center;    /* Alinha o conteúdo verticalmente no centro */
-    justify-content: space-between;
-    z-index: 10000;
-    transition: all 0.3s ease;
-    text-align: center;     /* Centraliza o texto */
-    border-radius: 15px;    /* Arredondamento das bordas */
-    opacity: 0.85; /* Opacidade reduzida, mas ainda visível */
-}
-
-
-#notification.hidden {
-    opacity: 0;
-    transform: translate(-50%, -50%) translateY(-20px);
-    pointer-events: none;
-}
-
-/* Notificação de sucesso */
-#notification.success {
-    background-color:#011a00;  /* Verde para sucesso */
-}
-
-/* Notificação de erro */
-#notification.error {
-    background-color: #200000;  /* Vermelho para erro */
-    
-}
-
-#notification .close-btn {
-    cursor: pointer;
-    font-size: 1.5rem;
-    font-weight: bold;
-}

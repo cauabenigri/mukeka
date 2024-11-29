@@ -80,7 +80,7 @@ header {
     right: 20px;
     padding: 0.1px 0.1px; /* Padding fixo para manter o tamanho do botão */
     font-size: calc(1.5vw + 1rem); /* Ajusta o tamanho da fonte responsivamente, com um valor mínimo */
-    min-font-size: 50px; /* Adiciona um tamanho mínimo para a fonte */
+
     cursor: pointer;
     background-color: #000000;
     color: #fff;
