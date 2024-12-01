@@ -1,5 +1,5 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js';
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js';
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js';
 import { getFirestore, collection, query, where, getDocs, setDoc, doc } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
 
 // Carregando a biblioteca js-cookie
@@ -19,15 +19,17 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const firestore = getFirestore(app);
 
-// Verificação de login ao carregar a página
-window.onload = function () {
-    if (Cookies.get('auth') === 'loggedIn') {
-        window.location.href = '../homeautenticado/index.html'; // Redireciona se o usuário estiver autenticado
+
+
+// Verificar se o usuário está autenticado ao carregar a página
+onAuthStateChanged(auth, user => {
+    if (user) {
+        console.log('Usuário autenticado:', user);
+        window.location.href = '../homeautenticado/index.html'; // Redireciona para a página homeautenticado
+    } else {
+        console.log('Usuário não autenticado');
     }
-};
-
-
-
+});
 
 
 // Função para carregar música aleatória
@@ -171,8 +173,6 @@ document.addEventListener('DOMContentLoaded', () => {
             showNotification('Login bem-sucedido!', 'success');
             loginModal.style.display = 'none';
 
-            // Cria o cookie para manter o usuário autenticado
-            Cookies.set('auth', 'loggedIn', { expires: 7 }); // Cookie expira em 7 dias
 
             // Redireciona para a página autenticada
             window.location.href = '../homeautenticado/index.html';
@@ -259,7 +259,7 @@ loginForm.addEventListener('submit', async (e) => {
         console.error('Erro ao fazer login:', error);
         showNotification('Falha no login. Tente novamente.', 'error');
     }
-});s
+});
 
 
 

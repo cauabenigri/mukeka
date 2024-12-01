@@ -172,10 +172,6 @@ header {
     z-index: 9999;
 }
 
-a {
-    color:white;
-}
-
 .modal.show {
     display: flex;
     opacity: 1; /* Exibe o modal com transição */

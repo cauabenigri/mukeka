@@ -22,7 +22,7 @@ import {
 import { checkAuth, fetchPerfilInfo, enableEditMode, saveProfileChanges } from './auth-profile.js';
 import { fetchAndDisplayMusic, uploadMusicToFirestore } from './music.js';
 import { setupModals } from './modals.js';  // Importe a função de setup dos modais
-import './search.js';
+
 
 
 
