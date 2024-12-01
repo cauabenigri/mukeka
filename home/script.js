@@ -1,6 +1,6 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js';
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js';
-import { getFirestore, collection, query, where, getDocs, setDoc, doc } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
+import { getFirestore, collection, query, where, getDocs, setDoc, doc, getDoc} from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
 
 // Carregando a biblioteca js-cookie
 // Adicione a biblioteca js-cookie no seu HTML:
@@ -19,15 +19,38 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const firestore = getFirestore(app);
 
+// Variável para identificar o contexto de autenticação
+let isRegistering = false;
 
 
 // Verificar se o usuário está autenticado ao carregar a página
-onAuthStateChanged(auth, user => {
+onAuthStateChanged(auth, async (user) => {
     if (user) {
         console.log('Usuário autenticado:', user);
-        window.location.href = '../homeautenticado/index.html'; // Redireciona para a página homeautenticado
+
+        // Evita redirecionar imediatamente após o registro
+        if (isRegistering) {
+            console.log('Usuário recém-registrado. Não redirecionar ainda.');
+            return;
+        }
+
+        try {
+            // Verificar se os dados do usuário no Firestore são válidos
+            const userDocRef = doc(firestore, 'users', user.uid);
+            const userDoc = await getDoc(userDocRef);
+
+            if (userDoc.exists() && userDoc.data().email && userDoc.data().name) {
+                console.log('Usuário possui dados válidos:', userDoc.data());
+                // Redireciona para a página autenticada
+                window.location.href = '../homeautenticado/index.html';
+            } else {
+                console.log('Dados do usuário incompletos ou inválidos.');
+            }
+        } catch (error) {
+            console.error('Erro ao verificar dados do usuário no Firestore:', error);
+        }
     } else {
-        console.log('Usuário não autenticado');
+        console.log('Usuário não autenticado.');
     }
 });
 
@@ -182,30 +205,39 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Função de registro
-    const registerForm = document.getElementById('register-form');
-    registerForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = document.getElementById('register-email').value;
-        const name = document.getElementById('register-name').value;
-        const pass = document.getElementById('register-pass').value;
+// Registro ajustado para não redirecionar imediatamente
+const registerForm = document.getElementById('register-form');
+registerForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('register-email').value;
+    const name = document.getElementById('register-name').value;
+    const pass = document.getElementById('register-pass').value;
 
-        try {
-            const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
-            const user = userCredential.user;
+    isRegistering = true; // Indica que o registro está em andamento
 
-            await setDoc(doc(firestore, 'users', user.uid), {
-                email: email,
-                name: name
-            });
+    try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+        const user = userCredential.user;
 
-            showNotification('Registro bem-sucedido!', 'success');
-        } catch (error) {
-            console.error('Erro ao registrar:', error);
-            showNotification('Falha no registro. Tente novamente.', 'error');
+        // Salvar os dados do usuário no Firestore
+        await setDoc(doc(firestore, 'users', user.uid), {
+            email: email,
+            name: name
+        });
 
-        }
-    });
+        console.log('Usuário registrado com sucesso:', user);
+        showNotification('Registro bem-sucedido!', 'success');
+
+        // Reseta o estado após um tempo para evitar redirecionamento futuro
+        setTimeout(() => {
+            isRegistering = false;
+        }, 3000); // Pode ajustar o tempo se necessário
+    } catch (error) {
+        console.error('Erro ao registrar:', error);
+        showNotification('Falha no registro. Tente novamente.', 'error');
+        isRegistering = false; // Reseta o estado no caso de falha
+    }
+});
 
 
     // Função para exibir notificações
