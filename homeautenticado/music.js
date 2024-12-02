@@ -1,10 +1,14 @@
-import { getDocs, collection, doc, getDoc, addDoc } from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js';
+import { deleteDoc, getDocs, collection, doc, getDoc, addDoc } from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js';
 import { storage, firestore } from './firebase-config.js';
+import {  signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js';
+import { getAuth } from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js';
+
 
 const defaultCoverUrl = 'https://firebasestorage.googleapis.com/v0/b/mukekajasko.appspot.com/o/covers%2Fdefault.jpg?alt=media';
 
 let searchActive = false; // Flag para controlar se a pesquisa está ativa
 let musicOffset = 0; // Controla o ponto de onde pegar as músicas
+
 
 // Função para exibir a lista de músicas
 export const displayMusicList = (musicData) => {
@@ -38,6 +42,8 @@ const shuffleArray = (array) => {
     }
     return array;
 };
+
+
 
 // Função para buscar e exibir músicas com limite de 16 e alternando o conjunto de músicas
 export const fetchAndDisplayMusic = async (searchTerm = '') => {
@@ -86,38 +92,7 @@ export const fetchAndDisplayMusic = async (searchTerm = '') => {
     }
 };
 
-// Modifique a função `displayMusicDetails` para usar o novo método que busca todos os detalhes do usuário
-export const displayMusicDetails = (data) => {
-    document.getElementById('music-title').textContent = data.title;
-    document.getElementById('music-type').textContent = data.type;
-    document.getElementById('music-bpm').textContent = data.bpm;
-    document.getElementById('music-note').textContent = data.note;
-    document.getElementById('music-scale').textContent = data.scale;
-    document.getElementById('music-price').textContent = data.price;
-    document.getElementById('music-pix-key').textContent = data.pixKey;
-    document.getElementById('music-cover').src = data.coverUrl || defaultCoverUrl;
-
-    // Buscar nome, contato e foto de perfil do usuário
-    fetchUserDetails(data.userId).then(({ userName, userContact, userProfilePic }) => {
-        // Criar um link com o userId do usuário
-        const usernameElement = document.getElementById('music-username');
-        usernameElement.textContent = `Por: `;
-        
-        const userLink = document.createElement('a');
-        userLink.href = `../user/index.html?userId=${data.userId}`;  // URL com o userId como parâmetro
-        userLink.textContent = userName;
-        userLink.style.textDecoration = "none";  // Remover sublinhado, caso queira
-        userLink.style.color = "#007bff";  // Cor de link, pode personalizar
-        usernameElement.appendChild(userLink);
-
-        document.getElementById('music-contact').textContent = `Contato: ${userContact}`;
-        document.getElementById('music-profile-pic').src = userProfilePic;  // Adiciona a foto de perfil
-    });
-
-    document.getElementById("musicDataModal").classList.add("show");
-};
-
-// Função para buscar o nome, contato e foto de perfil do usuário
+// Função para buscar nome, contato e foto de perfil do usuário
 const fetchUserDetails = async (userId) => {
     try {
         const userDoc = await getDoc(doc(firestore, 'users', userId));
@@ -137,12 +112,154 @@ const fetchUserDetails = async (userId) => {
     }
 };
 
+export const displayMusicDetails = (data) => {
+    document.getElementById('music-title').textContent = data.title;
+    document.getElementById('music-type').textContent = data.type;
+    document.getElementById('music-bpm').textContent = data.bpm;
+    document.getElementById('music-note').textContent = data.note;
+    document.getElementById('music-scale').textContent = data.scale;
+    document.getElementById('music-price').textContent = data.price;
+    document.getElementById('music-pix-key').textContent = data.pixKey;
+    document.getElementById('music-cover').src = data.coverUrl || defaultCoverUrl;
+
+    // Atualiza o player de música
+    const audioPlayer = document.getElementById('music-player');
+    const audioSource = document.getElementById('music-player-source');
+    audioSource.src = data.mp3Url || data.wavUrl || '';
+    audioPlayer.load(); // Recarrega o player com a nova música
+    audioPlayer.play(); // Reproduz a música automaticamente
+
+    fetchUserDetails(data.userId).then(({ userName, userContact, userProfilePic }) => {
+        const usernameElement = document.getElementById('music-username');
+        usernameElement.textContent = ``;
+
+        const userLink = document.createElement('a');
+        userLink.href = `../user/index.html?userId=${data.userId}`;
+        userLink.textContent = userName;
+        userLink.style.textDecoration = "none";
+        userLink.style.color = "#007bff";
+        usernameElement.appendChild(userLink);
+
+        document.getElementById('music-contact').textContent = `${userContact}`;
+        document.getElementById('music-profile-pic').src = userProfilePic;
+    });
+
+    // Verifica se o usuário logado é o mesmo que o dono da música
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    // Identifica os botões
+    const buyButton = document.getElementById('buy-button');
+    const editButton = document.getElementById('edit-music-button');
+
+    if (user && user.uid === data.userId) {
+        // Se for o mesmo usuário, mostra o botão de editar e esconde o de comprar
+        buyButton.style.display = 'none';  // Torna o botão de comprar invisível
+        editButton.style.display = 'block'; // Torna o botão de editar visível
+
+        // Adiciona o evento de clique no botão de editar para excluir a música
+        editButton.addEventListener('click', () => {
+            const musicId = data.id; // ID do documento da música que será excluído
+            deleteMusic(musicId);  // Chama a função para deletar a música
+        });
+
+    } else {
+        // Caso contrário, esconde o botão de editar e mostra o de comprar
+        buyButton.style.display = 'block';  // Torna o botão de comprar visível
+        editButton.style.display = 'none';  // Torna o botão de editar invisível
+    }
+
+    // Exibe o modal de detalhes da música
+    document.getElementById("musicDataModal").classList.add("show");
+};
+
+// Função para excluir a música do Firestore
+const deleteMusic = async (musicId) => {
+    try {
+        const musicRef = doc(firestore, 'uploads', musicId); // Obtém a referência do documento da música
+        await deleteDoc(musicRef);  // Deleta o documento
+        showNotification("Excluido com sucesso!", 'error')
+        
+        // Recarrega a página após a exclusão
+        window.location.reload();  // Isso recarregará a página, atualizando a interface
+    } catch (error) {
+        console.error("Erro ao excluir a música:", error);
+    }
+};
+
+
+
+
+
+function showNotification(message, type = 'success') {
+    const notification = document.getElementById('notification');
+    notification.textContent = message;
+
+    // Limpar qualquer classe de tipo anterior
+    notification.classList.remove('success', 'error');
+
+    // Adicionar a classe correspondente ao tipo
+    if (type === 'success') {
+        notification.classList.add('success');
+    } else if (type === 'error') {
+        notification.classList.add('error');
+    }
+
+    notification.classList.remove('hidden'); // Mostra a notificação
+    setTimeout(() => {
+        notification.classList.add('hidden'); // Esconde após 8 segundos
+    }, 5000); // Duração de 8 segundos
+}
+
+// Espera o carregamento completo do DOM
+document.addEventListener('DOMContentLoaded', function() {
+    // Seleciona o botão "Comprar"
+    const buyButton = document.getElementById('buy-button');
+    
+    // Adiciona um evento de clique ao botão "Comprar"
+    buyButton.addEventListener('click', function() {
+        // Obtém os dados do modal
+        const username = document.getElementById('music-username').textContent;
+        const price = document.getElementById('music-price').textContent;
+        const pixKey = document.getElementById('music-pix-key').textContent;
+        const contact = document.getElementById('music-contact').textContent;
+        
+        // Exibe os dados usando a notificação personalizada
+        showNotification("No momento não há suporte a gateway de pagamento no MuKeKa. Envie " + price + "\n no PIX " + pixKey + "\n e entre em contato com " + username + "\n em " + contact + "\n para evitar qualquer transtorno. ")
+ 
+    });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Função para limpar o estado de pesquisa e permitir a exibição novamente sem filtros
 export const clearSearch = () => {
     searchActive = false;
     // Chama novamente a função sem o filtro de pesquisa
     fetchAndDisplayMusic();
 };
+
+
 
 // Função para configurar os botões
 const setupButtons = () => {

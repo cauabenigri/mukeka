@@ -142,11 +142,6 @@ header {
     opacity: 0.7; /* Diminui a opacidade da capa tocando */
 }
 
-.header-text:hover{
-    cursor:pointer;
-    transition:0.5s;
-    opacity:50%;
-}
 
 /* ================================
    Estilos do Modal
@@ -206,11 +201,7 @@ header {
 }
 
 
-.profile-pic:hover {
-    opacity:50%;
-    transition-duration:0.3s;
-cursor:pointer;
-}
+
 
 /* Título do modal */
 .modal-content h2 {
@@ -737,6 +728,15 @@ cursor:pointer;
     left: 18%; /* Posição a partir da borda esquerda do contêiner, usando uma unidade percentual */
     top: 56%; /* Posição a partir do topo do contêiner */
 }
+.profile-pic:hover {
+    opacity:50%;
+    transition-duration:0.3s;
+cursor:pointer;
+}
+
+.headertext:hover{
+    cursor:pointer;
+}
 
 
 
@@ -1142,44 +1142,6 @@ opacity:0;
 
 
 
-
-/* ================================
-   Media Queries para Responsividade
-================================= */
-
-/* Ajustes em telas menores (máximo 768px) */
-@media (max-width: 768px) {
-    #upload-form {
-        max-width: 100%;
-    }
-
-    #file-input-label, #cover-input-label {
-        font-size: 18px;
-    }
-
-    #upload-button-label {
-        font-size: 1em;
-        bottom: -10px;
-        right: 20px;
-    }
-}
-
-/* Ajustes para dispositivos muito pequenos (máximo 480px) */
-@media (max-width: 480px) {
-    #upload-form {
-        max-width: 100%;
-    }
-
-    #file-input-label, #cover-input-label {
-        font-size: 18px;
-    }
-
-    #upload-button-label {
-        font-size: 1em;
-        bottom: -10px;
-        right: 20px;
-    }
-}
 
 .hidden-temporarily {
     display: none !important; /* Esconde completamente o elemento */

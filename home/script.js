@@ -18,6 +18,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const firestore = getFirestore(app);
+const loggedInUserId = user ? user.uid : null; // Obtém o ID do usuário logado
 
 // Variável para identificar o contexto de autenticação
 let isRegistering = false;
@@ -219,10 +220,11 @@ registerForm.addEventListener('submit', async (e) => {
         const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
         const user = userCredential.user;
 
-        // Salvar os dados do usuário no Firestore
+        // Salvar os dados do usuário no Firestore com o campo 'contact' fixo
         await setDoc(doc(firestore, 'users', user.uid), {
             email: email,
-            name: name
+            name: name,
+            contact: 'contato'  // Campo contact com o valor fixo
         });
 
         console.log('Usuário registrado com sucesso:', user);
@@ -238,6 +240,7 @@ registerForm.addEventListener('submit', async (e) => {
         isRegistering = false; // Reseta o estado no caso de falha
     }
 });
+
 
 
     // Função para exibir notificações

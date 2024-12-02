@@ -1,467 +1,1017 @@
-/* ================================
-   Reset e Configuração Inicial
-================================= */
-
-/* Resetando margens e padding do HTML e body */
-html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    background-color: black;
-    color: white;
-    font-family: 'OldLondon', sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-/* ================================
-   Fonte Personalizada (OldLondon)
-================================= */
-@font-face {
-    font-family: 'OldLondon';
-    src: url('OldLondon.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-}
-
-/* ================================
-   Estilos de Títulos e Cabeçalhos
-================================= */
-
-/* Estilo do título principal */
-h1 {
-    font-size: calc(3rem + 3vw); /* Tamanho responsivo com base na largura da tela */
-    text-align: center;
-    margin: 5vmin 0 2rem 0; /* Espaços acima e abaixo do título */
-    max-width: 90%; /* Limita a largura do título */
-    z-index: 10;
-    line-height: 1.1; /* Ajusta a altura da linha */
-    user-select: none; /* Bloqueia a seleção de texto */
-}
-
-/* ================================
-   Layout do Cabeçalho e Botões
-================================= */
-
-/* Header com centralização do título */
-header {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    user-select: none; /* Bloqueia a seleção de texto */
-}
-
-
-/* Efeito de hover no <span> */
-.modal .close {
-    font-size: calc(1.5vw + 1rem); /* Tamanho de fonte responsivo */
-    right: 5%;
-    top: 4%;
-}
-
-/* Efeito de hover no <span> */
-.modal .close:hover {
-    color: #4caf50;                    /* Cor ao passar o mouse */
-}
-
-/* Estilos para os botões de abrir modal e perfil */
-#openModalBtn, #openPerfil {
-    font-family: 'OldLondon';
-    position: absolute;
-    top: 10px;
-    padding: 0.1px 0.1px;
-    font-size: calc(1.5vw + 1rem); /* Tamanho de fonte responsivo */
-    cursor: pointer;
-    background-color: #000000;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
-
-
+html,body {
+    margin:0;
+    padding:0;
+    height:100%;
+    background-color:#000;
+    color:#fff;
+    font-family:'OldLondon',sans-serif;
+    display:flex;
+    flex-direction:column;
+    align-items:center
+    }
     
-}
-
-#openModalBtn {
-    right: 20px;
-}
-
-#openPerfil {
-    left: 20px;
-}
-
-/* Efeito de hover nos botões */
-#openModalBtn:hover, #openPerfil:hover {
-    color: #4caf50; /* Cor do texto ao passar o mouse */
-}
-
-/* ================================
-   Estilo da Lista de Músicas
-================================= */
-
-/* Layout da lista de músicas com capas */
-#music-list {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr); /* 4 colunas */
-    gap: 10px; /* Espaçamento entre as capas */
-    padding: 20px;
-    width: 100%;
-    max-width: 960px; /* Limita a largura da lista */
-    box-sizing: border-box;
-}
-
-/* Estilo de cada item de música (capa) */
-.music-item {
-    width: 100%;
-    max-width: 150px; /* Limita a largura do item */
-    aspect-ratio: 1 / 1; /* Mantém a proporção quadrada */
-    position: relative;
-    overflow: hidden;
-    box-sizing: border-box;
-}
-
-/* Estilo das imagens de capa */
-.cover-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* A imagem vai cobrir a área disponível */
-    border-radius: 8px;
-    transition: opacity 0.3s, transform 0.3s; /* Transição para efeitos de hover */
-    cursor: pointer; /* Indica que a imagem é clicável */
-}
-
-/* Efeito hover nas imagens de capa */
-.cover-image:hover {
-    opacity: 0.8; /* Diminui a opacidade ao passar o mouse */
-    transform: scale(1.05); /* Leve aumento no tamanho da imagem */
-}
-
-/* Efeito de capa tocando */
-.cover-image.playing {
-    opacity: 0.7; /* Diminui a opacidade da capa tocando */
-}
-
-/* ================================
-   Estilo do Player de Áudio
-================================= */
-
-/* Ocultar o player de áudio (será exibido ao clicar na capa) */
-.audio-player {
-    display: none;
-}
-
-/* ================================
-   Estilos do Modal
-================================= */
-
-/* Estilo do modal, inicialmente oculto */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    justify-content: center;
-    align-items: center;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    z-index: 9999;
-}
-
-a {
-    color:white;
-}
-
-.modal.show {
-    display: flex;
-    opacity: 1; /* Exibe o modal com transição */
-}
-
-/* Conteúdo do modal */
-.modal-content {
-    background-color: #000000;
-    width: 20%;
-    padding: 20px;
-    border-radius: 8px;
-    color: #fff;
-    position: relative;
-    box-shadow: 0px 8px 8px rgba(65, 42, 42, 0.2);
-}
-
-/* Capa da música no modal */
-.cover-image-modal {
-    position: absolute;
-    top: 25%;
-    right: 10%;
-    width: 28%;
-    height: 30%;
-    object-fit: cover;
-    border-radius: 8px;
-}
-
-/* Título do modal */
-.modal-content h2 {
-    margin: 0;
-    font-size: 3em;
-    text-align: left;
-    margin-bottom: 20px;
-}
-
-/* Formulário de upload dentro do modal */
-#upload-form {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-
-/* Botão de fechar o modal */
-.close {
-    color: #ffffff;
-    position: absolute;
-    top: 5px;
-    right: 13px;
-    font-size: 24px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.close:hover, .close:focus {
-    color: rgb(173, 173, 173); /* Muda a cor ao passar o mouse */
-}
-
-/* ================================
-   Estilo para Inputs e Botões de Upload
-================================= */
-
-/* Rótulos de input (arquivo e capa) */
-#file-input-label, #cover-input-label {
-    font-size: 25px;
-    color: #fff;
-    cursor: pointer;
-    text-align: left;
-    transition: color 0.3s ease;
-    display: block;
-}
-
-#file-input-label:hover, #cover-input-label:hover {
-    color: #4caf50; /* Cor ao passar o mouse */
-}
-
-/* Inputs de arquivo e capa (ocultos) */
-#file-input, #cover-input {
-    display: none;
-}
-
-/* Botão de upload (visível no modal) */
-#upload-button-label {
-    font-family: 'OldLondon', sans-serif;
-    font-size: 25px;
-    color: #fff;
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    display: block;
-    text-align: center;
-    margin: 0;
-    position: relative;
-    transition: color 0.3s ease;
-    left: 200px;
-    top: 14px;
-}
-
-/* Contêiner de progresso de upload */
-#progress-container {
-    position: absolute;
-    bottom: 20px;
-    width: 50%;
-    background-color: #333;
-    border-radius: 4px;
-    padding: 5px;
-}
-
-/* Barra de progresso */
-#progress-bar {
-    height: 25px;
-    background-color: #4caf50;
-    width: 0;
-    border-radius: 4px;
-}
-
-
-
-
-#perfilModal {
+    @font-face {
+    font-family:'OldLondon';
+    src:url(OldLondon.ttf) format("truetype");
+    font-weight:400;
+    font-style:normal
+    }
     
-    top: 60px;
-    left: 20px;
-
-    display: none;
-    
-
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-
-}
-
-#perfilModal.show {
-    display: block;
-}
-
-/* Estilo da imagem do perfil */
-.profile-pic {
-    width: 80px;  /* Tamanho da imagem */
-    height: 80px;  /* Tamanho fixo */
-    object-fit: cover;  /* Garante que a imagem seja cortada, mas preservando a proporção */
-    border-radius: 50%;  /* Torna a imagem circular */
-    margin-bottom: 20px;  /* Espaçamento abaixo da imagem */
-}
-
-
-/* ================================
-   Media Queries para Responsividade
-================================= */
-
-/* Ajustes em telas menores (máximo 768px) */
-@media (max-width: 768px) {
-    #upload-form {
-        max-width: 100%;
-    }
-
-    #file-input-label, #cover-input-label {
-        font-size: 18px;
-    }
-
-    #upload-button-label {
-        font-size: 1em;
-        bottom: -10px;
-        right: 20px;
-    }
-}
-
-/* Ajustes para dispositivos muito pequenos (máximo 480px) */
-@media (max-width: 480px) {
-    #upload-form {
-        max-width: 100%;
-    }
-
-    #file-input-label, #cover-input-label {
-        font-size: 18px;
-    }
-
-    #upload-button-label {
-        font-size: 1em;
-        bottom: -10px;
-        right: 20px;
-    }
-}
-
-
-/* Estilo das setas de navegação */
-.randomize-controls {
-    position: absolute;
-    top: 56%;                        /* Centraliza as setas verticalmente */
-    left: 0;
-    right: 0;
-    display: flex;
-    justify-content: center;         /* Coloca as setas no meio */
-    width: 100%;
-    transform: translateY(-50%);      /* Ajusta o alinhamento vertical para o meio exato */
-}
-
-#randomize-left, #randomize-right {
-    font-size: 2rem;
-    color: white;
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 10px;
-    margin: 0 350px;                  /* Adiciona espaço entre as setas */
-}
-
-#randomize-left:hover, #randomize-right:hover {
-    color: #4caf50;  /* Cor ao passar o mouse */
-}
-
-#notification {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: black;  /* Cor padrão */
-    color: white;
-    padding: 40px 80px;    /* Aumentando o padding para aumentar o tamanho da caixa */
-    font-size: 2rem;        /* Aumentando o tamanho da fonte */
-    height: 150px;          /* Definindo uma altura fixa para a notificação */
-    display: flex;
-    align-items: center;    /* Alinha o conteúdo verticalmente no centro */
-    justify-content: space-between;
-    z-index: 10000;
-    transition: all 0.3s ease;
-    text-align: center;     /* Centraliza o texto */
-    border-radius: 15px;    /* Arredondamento das bordas */
-    opacity: 0.85; /* Opacidade reduzida, mas ainda visível */
-}
-
-/* Caixa de Pesquisa */
-.search-container {
-    width: 100%;                  /* Largura total */
-    max-width: 960px;             /* Limita a largura da caixa de pesquisa */
-
-    margin-top: -18px; /* Ajuste a margem superior para 10px */
-    margin-bottom: 10px; /* Mantém o espaço abaixo da caixa de pesquisa */
-
-    display: flex;                /* Flexbox para centralizar o conteúdo */
-    justify-content: center;      /* Centraliza horizontalmente */
-}
-
-.search-box {
-    width: 100%;                  /* A caixa vai ter a largura total da container */
-    max-width: 600px;             /* Limita a largura da caixa de pesquisa */
-    padding: 10px;                /* Espaçamento interno */
-    font-size: 1rem;              /* Tamanho da fonte */
-    border: 2px solid #ffffff;    /* Borda verde */
-    border-radius: 20px;          /* Bordas arredondadas */
-    background-color: #333;       /* Fundo escuro */
-    color: white;                 /* Cor do texto */
-    transition: border-color 0.3s ease; /* Transição para mudança de borda */
-    font-family:  sans-serif;
+    h1 {
+    font-size:calc(3rem + 3vw);
     text-align:center;
-}
-
-/* Efeito de foco na caixa de pesquisa */
-.search-box:focus {
-    outline: none;                /* Remove o contorno padrão */
-    border-color: #4caf50;        /* Deixa a borda verde ao focar */
-    background-color: #444;       /* Muda o fundo para um tom mais claro */
-    border: 2px solid #4caf50;    /* Borda verde */
-}
-
-
-
-
-
-#notification.hidden {
-    opacity: 0;
-    transform: translate(-50%, -50%) translateY(-20px);
-    pointer-events: none;
-}
-
-/* Notificação de sucesso */
-#notification.success {
-    background-color:#000000;  /* Verde para sucesso */
-}
-
-/* Notificação de erro */
-#notification.error {
-    background-color: #000000;  /* Vermelho para erro */
+    margin:5vmin 0 2rem;
+    max-width:90%;
+    z-index:10;
+    line-height:1.1;
+    user-select:none
+    }
     
+    header {
+    width:100%;
+    display:flex;
+    justify-content:center;
+    user-select:none
+    }
+    
+    .modal .close {
+    font-size:calc(1.5vw + 1.2rem);
+    right:2vw;
+    top:1.1vw
+    }
+    
+    #openModalBtn,#openPerfil {
+    position:absolute;
+    top:10px;
+    padding:.1px;
+    cursor:pointer;
+    background-color:#0000;
+    color:#fff;
+    border:none;
+    border-radius:4px;
+    transition:background-color .3s ease;
+    font:calc(1.5vw + 1rem) 'OldLondon'
+    }
+    
+    #openModalBtn {
+    right:20px
+    }
+    
+    #openPerfil {
+    left:20px;
+    z-index:1010
+    }
+    
+    #music-list {
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    padding:20px;
+    width:100%;
+    max-width:960px;
+    box-sizing:border-box
+    }
+    
+    .music-item {
+    width:100%;
+    max-width:150px;
+    aspect-ratio:1 / 1;
+    position:relative;
+    overflow:hidden;
+    box-sizing:border-box
+    }
+    
+    .cover-image {
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    border-radius:8px;
+    transition:opacity 0.3s,transform .3s;
+    cursor:pointer
+    }
+    
+    .cover-image:hover {
+    opacity:.8;
+    transform:scale(1.05);
+    box-shadow:0 6px 12px #0003;
+    cursor:crosshair
+    }
+    
+    .cover-image.playing {
+    opacity:.7
+    }
+    
+    .modal {
+    display:none;
+    position:fixed;
+    z-index:1;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+    background-color:#00000080;
+    justify-content:center;
+    align-items:center;
+    opacity:0;
+    transition:opacity .3s ease;
+    z-index:9999
+    }
+    
+    .modal.show {
+    display:flex;
+    opacity:1
+    }
+    
+    .modal-content {
+    background-color:#181818;
+    width:400px;
+    height:600px;
+    padding:20px;
+    border-radius:8px;
+    color:#fff;
+    position:relative;
+    box-shadow:0 8px 8px #412a2a33;
+    overflow:auto;
+    box-sizing:border-box
+    }
+    
+    .modal-content-upload {
+    background-color:#181818;
+    width:20%;
+    padding:20px;
+    border-radius:8px;
+    color:#fff;
+    position:relative;
+    box-shadow:0 8px 8px #412a2a33
+    }
+    
+    .modal-content h2 {
+    margin:0;
+    font-size:3em;
+    text-align:left;
+    margin-bottom:20px
+    }
+    
+    #upload-form {
+    display:flex;
+    flex-direction:column;
+    gap:5px
+    }
+    
+    .close {
+    color:#fff;
+    position:absolute;
+    top:5px;
+    right:13px;
+    font-size:24px;
+    font-weight:700;
+    cursor:pointer
+    }
+    
+    .close:hover,.close:focus {
+    color:#0f3
+    }
+    
+    #file-input-label,#cover-input-label {
+    font-size:25px;
+    color:#fff;
+    cursor:pointer;
+    text-align:center;
+    transition:color .3s ease;
+    display:block
+    }
+    
+    #upload-button-label {
+    background-color:#138f30;
+    width:42%;
+    color:#fff;
+    padding:12px 15px;
+    border:none;
+    border-radius:20px;
+    cursor:pointer;
+    transition:background-color .3s ease,transform .2s ease;
+    position:absolute;
+    top:27.5vw;
+    left:10.7vw;
+    z-index:10;
+    font:1.5rem 'OldLondon'
+    }
+    
+    #progress-bar {
+    height:25px;
+    background-color:#4caf50;
+    width:0;
+    border-radius:2px;
+    transition:width .3s ease
+    }
+    
+    #progress-container {
+    position:relative;
+    width:40%;
+    max-width:600px;
+    background-color:#282828;
+    border-radius:4px;
+    margin:20px auto;
+    padding:5px;
+    right:4.8vw;
+    top:2.5vw
+    }
+    
+    #perfilModal {
+    display:none;
+    position:fixed;
+    top:0;
+    left:0;
+    width:250px;
+    height:250px;
+    background-color:#000;
+    border-radius:8px;
+    color:#fff;
+    box-shadow:0 8px 16px #0003;
+    padding:10px;
+    z-index:1000;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-start;
+    align-items:center
+    }
+    
+    #perfilModal .modal-content {
+    overflow:hidden;
+    background-color:#101010;
+    width:100%;
+    height:80%;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-start;
+    align-items:center
+    }
+    
+    #perfilModal .close {
+    position:absolute;
+    top:10px;
+    right:10px;
+    font-size:1.5rem;
+    cursor:pointer;
+    color:#fff
+    }
+    
+    #perfilModal h2 {
+    font-size:1.2rem;
+    margin-bottom:10px;
+    text-align:center;
+    word-wrap:break-word
+    }
+    
+    #perfilModal #perfil-info {
+    margin-top:10px;
+    text-align:center;
+    font-size:.9rem;
+    flex-grow:1;
+    overflow:hidden
+    }
+    
+    #perfilModal img#perfil-picture {
+    width:80px;
+    height:80px;
+    border-radius:50%;
+    object-fit:cover;
+    margin-bottom:10px
+    }
+    
+    #perfilModal.show {
+    display:block
+    }
+    
+    .randomize-controls {
+    position:absolute;
+    top:56%;
+    left:0;
+    right:0;
+    display:flex;
+    justify-content:center;
+    width:100%;
+    transform:translateY(-50%)
+    }
+    
+    #randomize-left,#randomize-right {
+    font-size:2rem;
+    color:#fff;
+    background-color:transparent;
+    border:none;
+    cursor:pointer;
+    padding:10px;
+    margin:0 350px
+    }
+    
+    #notification {
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    background-color:#000;
+    color:#fff;
+    padding:20px 40px;
+    font-size:2rem;
+    max-width:400px;
+    width:15%;
+    height:auto;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    z-index:10000;
+    transition:all .3s ease;
+    text-align:center;
+    border-radius:15px;
+    opacity:.85;
+    word-wrap:break-word
+    }
+    
+    .search-container {
+    width:100%;
+    max-width:960px;
+    margin-top:-18px;
+    margin-bottom:10px;
+    display:flex;
+    justify-content:center
+    }
+    
+    .search-box {
+    width:100%;
+    max-width:600px;
+    padding:10px;
+    border:2px solid #fff;
+    border-radius:20px;
+    background-color:#333;
+    color:#fff;
+    transition:border-color .3s ease;
+    text-align:center;
+    font:1rem sans-serif
+    }
+    
+    .search-box:focus {
+    outline:none;
+    border-color:#4caf50;
+    background-color:#444;
+    border:2px solid #4caf50
+    }
+    
+    #notification.hidden {
+    opacity:0;
+    transform:translate(-50%,-50%) translateY(-20px);
+    pointer-events:none
+    }
+    
+    #notification .close-btn {
+    cursor:pointer;
+    font-size:1.5rem;
+    font-weight:700
+    }
+    
+    .modal-content.music-modal {
+    background-color:#121212;
+    width:23vw;
+    height:60vh;
+    padding:20px;
+    border-radius:12px;
+    color:#fff;
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-40%,-50%);
+    box-shadow:0 10px 15px #00000080;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-start;
+    align-items:center;
+    box-sizing:border-box;
+    visibility:visible;
+    overflow:hidden
+    }
+    
+    .modal-content.music-modal img.cover-image-modal {
+    visibility:visible;
+    width:70%;
+    height:auto;
+    max-width:100%;
+    max-height:100%;
+    border-radius:8px;
+    object-fit:cover;
+    object-position:center;
+    display:block;
+    margin-left:auto;
+    margin-right:auto;
+    aspect-ratio:1
+    }
+    
+    .fds {
+    border-radius:50%;
+    width:30%;
+    height:50%;
+    object-fit:cover;
+    margin-bottom:10px;
+    border:2px solid #03970d;
+    align-self:flex-start;
+    margin-right:auto;
+    cursor:pointer;
+    position:absolute;
+    left:5%;
+    top:25%
+    }
+    
+    .fds:hover {
+    filter:contrast(80%)
+    }
+    
+    #perfil-name {
+    font-size:2rem;
+    font-weight:700;
+    color:#fff;
+    text-align:left;
+    padding:5px;
+    width:50%;
+    margin-left:5vw;
+    white-space:nowrap;
+    display:block
+    }
+    
+    #perfil-email {
+    font-size:.8rem;
+    font-weight:700;
+    color:#fff;
+    text-align:left;
+    margin-top:-1vw;
+    padding:5px;
+    width:50%;
+    margin-left:5vw;
+    white-space:nowrap;
+    display:block
+    }
+    
+    #perfil-contact {
+    font-size:.9rem;
+    font-weight:700;
+    color:#fff;
+    text-align:left;
+    margin-top:-1vw;
+    padding:5px;
+    width:50%;
+    margin-left:5vw;
+    white-space:nowrap;
+    display:block
+    }
+    
+    #perfilModal .button-container {
+    position:relative;
+    display:flex;
+    justify-content:flex-start;
+    gap:10px;
+    margin-top:10px;
+    width:100%
+    }
+    
+    #perfilModal button.botaofoda {
+    position:absolute;
+    top:7.8vw;
+    left:20px;
+    padding:10px 20%;
+    background-color:#03970d;
+    color:#fff;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+    font:.9rem 'OldLondon'
+    }
+    
+    #perfilModal button.botaofoda3 {
+    position:absolute;
+    top:7.8vw;
+    left:20px;
+    padding:10px 20%;
+    background-color:#5d655e;
+    color:#fff;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+    font:.9rem 'OldLondon'
+    }
+    
+    #perfilModal button.botaofoda2 {
+    position:absolute;
+    top:8vw;
+    left:69.2%;
+    padding:5px 10px;
+    background-color:#800e0e;
+    color:#fff;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+    font:.9rem 'OldLondon'
+    }
+    
+    #perfilModal button.botaofoda:hover {
+    background-color:#028a0b
+    }
+    
+    .botaofoda:focus {
+    outline:none;
+    color:green
+    }
+    
+    .profile-pic {
+    border-radius:50%;
+    width:4vw;
+    height:4vw;
+    object-fit:cover;
+    margin-bottom:10px;
+    align-self:flex-start;
+    margin-right:auto;
+    position:absolute;
+    left:18%;
+    top:56%
+    }
+    
+    .profile-pic:hover {
+    opacity:50%;
+    transition-duration:.3s;
+    cursor:pointer
+    }
+    
+    .headertext:hover {
+    cursor:pointer
+    }
+    
+    .modal-content.music-modal h2 {
+    font-size:2.5rem;
+    margin-bottom:15px;
+    text-align:left;
+    width:90%;
+    padding-left:10px;
+    display:flex;
+    justify-content:left;
+    align-items:left;
+    flex-shrink:0;
+    flex-grow:0;
+    position:relative;
+    top:1vh;
+    left:6.5vw;
+    max-width:90%
+    }
+    
+    #music-player {
+    margin-top:40px;
+    width:64%;
+    max-width:700px;
+    margin-left:auto;
+    margin-right:auto;
+    align-self:center;
+    display:block;
+    position:relative;
+    bottom:1vw;
+    left:2.3vw;
+    right:0
+    }
+    
+    #music-username a {
+    text-decoration:none;
+    font-size:1.5rem;
+    margin-bottom:0;
+    padding-left:10px;
+    display:inline-block;
+    white-space:nowrap;
+    max-width:100%;
+    position:absolute;
+    top:64.5%;
+    left:160px;
+    transform:translateY(-50%)
+    }
+    
+    #music-username a:hover {
+    color:#fff
+    }
+    
+    #music-price {
+    color:#02b52b
+    }
+    
+    #music-info-container {
+    height:14%;
+    width:90%;
+    max-width:40px;
+    padding:20px;
+    border-radius:12px;
+    background-color:#161616;
+    box-shadow:0 4px 10px #00000026;
+    display:flex;
+    flex-direction:column;
+    gap:0;
+    align-items:flex-start;
+    justify-content:flex-start;
+    overflow:visible;
+    position:absolute;
+    bottom:3vw;
+    left:4vw
+    }
+    
+    #music-info-container p {
+    margin:0;
+    color:#fff;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    overflow:hidden;
+    text-align:center;
+    margin-left:-.5vw;
+    font:1rem/1.4 'OldLondon'
+    }
+    
+    #buy-button {
+    background-color:#02b52b;
+    width:42%;
+    color:#fff;
+    padding:12px 23px;
+    border:none;
+    border-radius:50px;
+    cursor:pointer;
+    transition:background-color .3s ease,transform .2s ease;
+    position:absolute;
+    top:23vw;
+    left:9vw;
+    z-index:10;
+    font:2rem 'OldLondon'
+    }
+    
+    #edit-music-button {
+    background-color:#7d0606;
+    width:42%;
+    color:#fff;
+    padding:12px 23px;
+    border:none;
+    border-radius:50px;
+    cursor:pointer;
+    transition:background-color .3s ease,transform .2s ease;
+    position:absolute;
+    top:23vw;
+    left:9vw;
+    z-index:10;
+    font:2rem 'OldLondon'
+    }
+    
+    #edit-music-button:hover {
+    background-color:#000;
+    transform:scale(1.05)
+    }
+    
+    #music-info-container strong {
+    font-weight:700;
+    color:#ccc
+    }
+    
+    .modal-content.music-modal .music-details {
+    margin-bottom:10px
+    }
+    
+    .modal-content.music-modal a {
+    color:#4caf50;
+    text-decoration:none
+    }
+    
+    .modal-content.music-modal a:hover {
+    text-decoration:underline
+    }
+    
+    .cover-image-upload {
+    position:absolute;
+    top:15%;
+    right:30%;
+    width:40%;
+    aspect-ratio:1 / 1;
+    object-fit:cover;
+    border-radius:8px;
+    border:2px solid #245630;
+    box-shadow:0 4px 6px #0000001a;
+    background-color:#f0f0f0;
+    overflow:hidden;
+    cursor:pointer
+    }
+    
+    #file-input-label {
+    position:absolute;
+    top:48%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    font-size:2rem;
+    color:#fff;
+    white-space:nowrap
+    }
+    
+    .title-container {
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    width:100%;
+    max-width:400px;
+    margin:20px auto
+    }
+    
+    #title-label {
+    font-size:1rem;
+    color:#fff;
+    margin-bottom:5px;
+    text-align:left
+    }
+    
+    #title-input {
+    width:87%;
+    padding:10px;
+    border:2px solid #ccc;
+    border-radius:5px;
+    color:#fff;
+    background-color:#201f1f;
+    position:relative;
+    top:11vw;
+    left:10px;
+    font:1rem 'OldLondon',sans-serif
+    }
+    
+    #bpm-input {
+    width:37%;
+    padding:10px;
+    border:2px solid #ccc;
+    border-radius:5px;
+    color:#fff;
+    background-color:#201f1f;
+    position:relative;
+    top:10vw;
+    left:9.9vw;
+    font:1rem 'OldLondon',sans-serif
+    }
+    
+    #music-input {
+    width:44%;
+    padding:10px;
+    border:2px solid #ccc;
+    border-radius:5px;
+    color:#fff;
+    background-color:#201f1f;
+    position:relative;
+    top:7.6vw;
+    left:10px;
+    font:1rem 'OldLondon',sans-serif
+    }
+    
+    #note-input {
+    width:44%;
+    padding:10px;
+    border:2px solid #ccc;
+    border-radius:5px;
+    color:#fff;
+    background-color:#201f1f;
+    position:relative;
+    top:7.7vw;
+    left:10px;
+    font:1rem 'OldLondon',sans-serif
+    }
+    
+    #scale-input {
+    width:43%;
+    padding:10px;
+    border:2px solid #ccc;
+    border-radius:5px;
+    color:#fff;
+    background-color:#201f1f;
+    position:relative;
+    top:5.3vw;
+    left:10vw;
+    font:1rem 'OldLondon',sans-serif
+    }
+    
+    #price-input {
+    width:37%;
+    padding:10px;
+    border:2px solid #ccc;
+    border-radius:5px;
+    color:#fff;
+    background-color:#201f1f;
+    position:relative;
+    top:5.3vw;
+    left:.5vw;
+    font:1rem 'OldLondon',sans-serif
+    }
+    
+    #pix-input {
+    width:37%;
+    padding:10px;
+    border:2px solid #ccc;
+    border-radius:5px;
+    color:#fff;
+    background-color:#201f1f;
+    position:relative;
+    top:2.9vw;
+    left:10vw;
+    font:1rem 'OldLondon',sans-serif
+    }
+    
+    #title-input:focus,#pix-input:focus,#bpm-input:focus,#music-input:focus,#note-input:focus,#scale-input:focus,#price-input:focus {
+    border-color:#206324;
+    outline:none
+    }
+    
+    .hidden-temporarily {
+    display:none!important
+    }
+    
+    .modal .close:hover,#openModalBtn:hover,#openPerfil:hover,#file-input-label:hover,#cover-input-label:hover,#randomize-left:hover,#randomize-right:hover {
+    color:#4caf50
+    }
+    
+    #file-input,#cover-input,#music-player::-webkit-media-controls-volume-slider,#music-player::-webkit-media-controls-volume-container,.modal-content.music-modal p.hide-other-ps {
+    display:none
+    }
+    
+    #upload-button-label:hover,#buy-button:hover {
+    background-color:#009c15;
+    transform:scale(1.05)
+    }
+    
+    #notification.success,#notification.error {
+    background-color:#000
+    }
+    
+    #music-contact,.modal-content.music-modal .close {
+    opacity:0
+    }
+
+/* Dispositivos móveis pequenos (ex: iPhone 5/SE) */
+@media screen and (max-width: 320px) {
+    body {
+        padding: 0;
+        margin: 0;
+        font-size: 14px;
+    }
+
+    h1 {
+        font-size: calc(1.8rem + 6vw); /* Aumentar mais rapidamente conforme a largura */
+        text-align: center;
+        padding: 0 10px;
+    }
+
+    .modal-content {
+        width: 90%;
+        height: auto;
+        padding: 10px;
+    }
+
+    #perfilModal {
+        width: 180px;
+        height: 180px;
+        margin-top: 10px;
+    }
+
+    #openModalBtn, #openPerfil {
+        font-size: 1rem;
+        padding: 8px;
+        width: 100%;
+    }
+
+    #music-list {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    #upload-button-label, #buy-button, #edit-music-button {
+        width: 90%;
+        font-size: 1rem;
+        padding: 8px;
+    }
 }
 
-#notification .close-btn {
-    cursor: pointer;
-    font-size: 1.5rem;
-    font-weight: bold;
+/* Dispositivos móveis (ex: iPhone X, Galaxy S10) */
+@media screen and (max-width: 480px) {
+    body {
+        padding: 0;
+        margin: 0;
+        font-size: 16px;
+    }
+
+    h1 {
+        font-size: calc(2rem + 5vw);
+        text-align: center;
+        padding: 10px;
+    }
+
+    .modal-content {
+        width: 85%;
+        height: 70%;
+        padding: 12px;
+    }
+
+    .cover-image {
+        transform: scale(1);
+        max-width: 100%;
+    }
+
+    #music-list {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    #upload-button-label, #buy-button {
+        width: 80%;
+        font-size: 1.1rem;
+        padding: 10px;
+    }
+
+    #perfilModal {
+        width: 220px;
+        height: 220px;
+        margin-top: 12px;
+    }
 }
+
+/* Tablets em modo paisagem */
+@media screen and (max-width: 768px) {
+    body {
+        font-size: 18px;
+        padding: 0;
+    }
+
+    h1 {
+        font-size: calc(2.5rem + 3vw);
+        text-align: center;
+        padding: 15px;
+    }
+
+    .modal-content {
+        width: 70%;
+        height: 70%;
+        padding: 15px;
+    }
+
+    #perfilModal {
+        width: 250px;
+        height: 250px;
+        margin-top: 15px;
+    }
+
+    #music-list {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+
+    #openModalBtn, #openPerfil {
+        font-size: 1.2rem;
+        padding: 12px;
+        width: 100%;
+    }
+
+    #upload-button-label, #buy-button, #edit-music-button {
+        width: 70%;
+        font-size: 1.3rem;
+        padding: 12px;
+    }
+}
+
+/* Tablets em modo retrato */
+@media screen and (max-width: 1024px) {
+    body {
+        font-size: 18px;
+        padding: 0;
+    }
+
+    h1 {
+        font-size: calc(2.5rem + 2.5vw);
+        text-align: center;
+        padding: 15px;
+    }
+
+    .modal-content {
+        width: 75%;
+        height: 80%;
+        padding: 18px;
+    }
+
+    #music-list {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+
+    #upload-button-label, #buy-button {
+        width: 70%;
+        font-size: 1.4rem;
+        padding: 14px;
+    }
+
+    #perfilModal {
+        width: 250px;
+        height: 250px;
+        margin-top: 18px;
+    }
+}
+
+

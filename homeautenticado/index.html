@@ -3,6 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="./style.css">
+
+
+
+
+    
+    <link rel="stylesheet" href="essential_audio.css" />
+<script src="essential_audio.js"></script>
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <title>MUKEKA</title>
@@ -49,142 +57,157 @@
     
     </main>
 
-    <!-- Upload -->
-    <div id="myModal" class="modal">
-        <div class="modal-content">
-            <span class="close" aria-label="Fechar">&times;</span>
+<!-- Upload -->
+<div id="myModal" class="modal">
+    <div class="modal-content">
+        <span class="close" aria-label="Fechar">&times;</span>
 
-            <form id="upload-form">
-                <h2>Enviar</h2>
-                
-                <label for="file-input" id="file-input-label">Insira aqui um arquivo de áudio</label>
-                <input type="file" id="file-input" accept=".mp3, .wav">
-                
-                <label for="cover-input" id="cover-input-label">Insira aqui um arquivo de capa</label>
-                <input type="file" id="cover-input" accept="image/*">
-                
-                <!-- Campo para título -->
-                <label for="title-input">Título:</label>
-                <input type="text" id="title-input">
-
-                <label for="music-input">Tipo de Música:</label>
-                <select id="music-input">
-                    <option value="">Selecione o tipo de música</option>
-                    <option value="Vocal">Vocal</option>
-                    <option value="Instrumental">Instrumental</option>
-                    <option value="Loop">Loop</option>
-                    <option value="Outro">Outro</option>
-                </select>
-                
-                <!-- Slider para BPM -->
-                <label for="bpm-input">BPM:</label>
-                <input type="range" id="bpm-input" min="50" max="300" value="100" step="1">
-                <span id="bpm-value">100</span>
-                
-                <!-- Seleção da Nota Musical -->
-                <label for="note-input">Nota Musical:</label>
-                <select id="note-input">
-                    <option value="C">C</option>
-                    <option value="C#">C#</option>
-                    <option value="D">D</option>
-                    <option value="D#">D#</option>
-                    <option value="E">E</option>
-                    <option value="F">F</option>
-                    <option value="F#">F#</option>
-                    <option value="G">G</option>
-                    <option value="G#">G#</option>
-                    <option value="A">A</option>
-                    <option value="A#">A#</option>
-                    <option value="B">B</option>
-                </select>
-                
-                <!-- Seleção do Tipo de Escala -->
-                <label for="scale-input">Tipo de Escala:</label>
-                <select id="scale-input">
-                    <option value="Maior">Maior</option>
-                    <option value="Menor">Menor</option>
-                    <option value="Diminuta">Diminuta</option>
-                    <option value="Aumentada">Aumentada</option>
-                    <!-- Adicione mais opções conforme necessário -->
-                </select>
-                
-                <!-- Campo para preço -->
-<!-- Campo para preço -->
-<label for="price-input">Preço:</label>
-<input type="number" id="price-input" placeholder="R$ 00,00" step="0.01" min="0">
-
-
-                <!-- Campo para chave PIX -->
-                <label for="pix-input">Chave PIX:</label>
-                <input type="text" id="pix-input" required>
-                
-                <button type="submit" id="upload-button-label">Confirmar</button>
-                <div id="progress-container">
-                    <div id="progress-bar"></div>
-                </div>
-            </form>
+        <form id="upload-form">
+            <h2 >Enviar</h2>
             
-            <!-- Contêiner para a capa exibida -->
-            <div id="cover-preview-container">
-                <img id="cover-preview" src="default2.jpg" alt=" " class="cover-image-modal">
+            <label for="file-input" id="file-input-label" >Áudio</label>
+            <input type="file" id="file-input" accept=".mp3, .wav" class="hidden-temporarily">
+            
+            <label for="cover-input" id="cover-input-label" class="hidden-temporarily">Insira aqui um arquivo de capa</label>
+            <input type="file" id="cover-input" accept="image/*" class="hidden-temporarily">
+            
+
+            <div class="title-container">
+
+                <input type="text" id="title-input" placeholder="Título">
             </div>
+            
+
+            
+
+
+<input type="number" id="bpm-input" placeholder="Bpm">
+<!-- <span id="bpm-value" >100</span> -->
+
+
+
+<select id="music-input" >
+    <option value="">Selecione o tipo de música</option>
+    <option value="Vocal">Vocal</option>
+    <option value="Instrumental">Instrumental</option>
+    <option value="Loop">Loop</option>
+    <option value="Outro">Outro</option>
+</select>
+
+            
+            <!-- Seleção da Nota Musical -->
+
+            <select id="note-input" >
+                <option value="C">C</option>
+                <option value="C#">C#</option>
+                <option value="D">D</option>
+                <option value="D#">D#</option>
+                <option value="E">E</option>
+                <option value="F">F</option>
+                <option value="F#">F#</option>
+                <option value="G">G</option>
+                <option value="G#">G#</option>
+                <option value="A">A</option>
+                <option value="A#">A#</option>
+                <option value="B">B</option>
+            </select>
+            
+            <!-- Seleção do Tipo de Escala -->
+
+            <select id="scale-input">
+                <option value="Maior">Maior</option>
+                <option value="Menor">Menor</option>
+                <option value="Cromatica">Cromática</option>
+
+                <!-- Adicione mais opções conforme necessário -->
+            </select>
+            
+            <!-- Campo para preço -->
+
+            <input id="price-input" placeholder="R$ 00,00">
+
+            <!-- Campo para chave PIX -->
+
+            <input type="text" id="pix-input" required placeholder="Chave PIX">
+            
+            <button type="submit" id="upload-button-label">Confirmar</button>
+            <div id="progress-container">
+                <div id="progress-bar"></div>
+            </div>
+        </form>
+        
+        <!-- Contêiner para a capa exibida -->
+        <div id="cover-preview-container" class="cover-container">
+            <img id="cover-preview" src="default2.jpg" alt="Capa" class="cover-image-upload">
         </div>
+
     </div>
+</div>
+
 
     <!-- Modal para exibir os dados da música -->
 <div id="musicDataModal" class="modal">
-    <div class="modal-content">
-        <span class="close" aria-label="Fechar">&times;</span>
+    <div class="modal-content music-modal">
+        <span class="close">&times;</span>
+        <div id="music-cover-container">
+            <img id="music-cover" src="" alt="Capa da música" class="cover-image-modal">
+        </div>
         <h2 id="music-title"></h2>
-        <p><strong>Tipo de Música:</strong> <span id="music-type"></span></p>
-        <p><strong>BPM:</strong> <span id="music-bpm"></span></p>
-        <p><strong>Nota Musical:</strong> <span id="music-note"></span></p>
-        <p><strong>Escala:</strong> <span id="music-scale"></span></p>
-        <p><strong>Preço:</strong> <span id="music-price"></span></p>
-        <p><strong>Chave PIX:</strong> <span id="music-pix-key"></span></p>
 
+<!-- Player de Música sem controle de volume -->
+<div id="music-player-container">
+    <audio id="music-player" controls controlsList="nodownload noremoteplayback novolume">
+        <source id="music-player-source" src="" type="audio/mp3">
+        Seu navegador não suporta o elemento <code>audio</code>.
+    </audio>
+</div>
+
+<div id="music-info-container">
+    <p > <span id="music-type"></span></p>
+    <p > Bpm: <span id="music-bpm"></span></p>
+    <p > <span id="music-note" ></span><span id="music-scale"></span></p>
+    <p id="color-price"><span id="music-price"></span></p>
+
+</div>
         <p id="music-userid"></p> <!-- Exibe o userId -->
         <p id="music-username"></p> <!-- Exibe o nome do usuário -->
         <p id="music-contact"></p> <!-- Exibe o contato do usuário -->
 
-        
-
-
-
-        
-        <div id="music-cover-container">
-            <img id="music-cover" src="" alt="Capa da música" class="cover-image-modal">
-        </div>
-
-        <img id="music-profile-pic" src="default2.jpg" alt="Foto do usuário" class="profile-pic">
+        <p class="hide-other-ps"><strong>Chave PIX:</strong> <span id="music-pix-key"></span></p>
+        <img id="music-profile-pic" src="default3.jpg" alt="Foto do usuário" class="profile-pic">
+        <button id="buy-button">Comprar</button>
+        <button id="edit-music-button" style="display: none;">Apagar</button>
 
     </div>
 </div>
+
+
+
 
 
     <!-- Perfil modal-->
 <div id="perfilModal" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>
-        <h2>Editar</h2>
+        <h2 class="hidden-temporarily">Editar</h2 >
         <div id="perfil-info">
 <!-- Input para escolher a foto de perfil -->
 
 
 
 <!-- Elemento de imagem para mostrar a foto de perfil -->
-<img id="perfil-picture" src="default2.jpg" alt="Foto de Perfil" class="profile-pic">
+<img id="perfil-picture" src="default3.jpg" alt="Foto de Perfil" class="fds">
 <input type="file" id="profile-pic-input" accept="image/*" style="display: none;">
 
-            <p><strong>Nome:</strong> <span id="perfil-name"></span></p>
-            <p><strong>Email:</strong> <span id="perfil-email"></span></p>
-            <p><strong>Contato:</strong> <span id="perfil-contact"></span></p>
+            <p ><strong></strong> <span id="perfil-name"></span></p>
+            <p ><strong></strong> <span id="perfil-email"></span></p>
+            <p><span id="perfil-contact"></span></p>
 
         </div>
-        <button id="edit-btn">Editar</button>
-        <button id="save-btn" style="display:none;">Salvar</button>
-
-        <button id="logout-btn">Logout</button>
+        <button class="botaofoda3" id="edit-btn">Editar</button>
+        <button class="botaofoda" id="save-btn" style="display:none;">Salvar</button>
+        <button class="botaofoda2" id="logout-btn">Logout</button>
+        
 
     </div>
 </div>

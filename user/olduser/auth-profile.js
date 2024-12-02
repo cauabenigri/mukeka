@@ -2,7 +2,6 @@ import { auth, storage, firestore } from './firebase-config.js';
 import { getDoc, doc, updateDoc } from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js';
 import { ref, uploadBytesResumable, getDownloadURL } from 'https://www.gstatic.com/firebasejs/11.0.2/firebase-storage.js';
 
-
 // Função para verificar se o usuário está autenticado
 export const checkAuth = () => {
     const user = auth.currentUser; // Obtém o usuário atual
@@ -13,16 +12,6 @@ export const checkAuth = () => {
     return true;  // Retorna true se o usuário estiver autenticado
 };
 
-// Certifique-se de que o usuário está definido antes de usá-lo
-const user = auth.currentUser;
-if (!user) {
-    console.log("Erro: Usuário não autenticado.");
-    // Opcionalmente, redirecionar para página de login ou outra ação
-} else {
-    // Aqui você pode usar a variável user normalmente
-    const loggedInUserId = user.uid; // Obtém o ID do usuário logado
-    // Outras operações...
-}
 
 
 // Função para buscar informações do perfil
@@ -30,7 +19,6 @@ export const fetchPerfilInfo = async () => {
     const user = auth.currentUser;
     if (!user) {
         console.log("Usuário não autenticado. Não é possível carregar as informações do perfil.");
-        window.location.href = '../home/index.html'; // Redireciona para a página homeautenticado
         document.getElementById("perfil-info").textContent = "Usuário não autenticado.";
         return;
     }
@@ -43,7 +31,7 @@ export const fetchPerfilInfo = async () => {
             document.getElementById("perfil-email").textContent = user.email || "N/A";
             document.getElementById("perfil-contact").textContent = userData.contact || "N/A";
             // Exibe a foto de perfil
-            const profilePicUrl = userData.profilePicture || 'default3.jpg';
+            const profilePicUrl = userData.profilePicture || 'default2.jpg';
             document.getElementById("perfil-picture").src = profilePicUrl;
         } else {
             document.getElementById("perfil-info").textContent = "Informações de perfil não encontradas.";
@@ -54,28 +42,13 @@ export const fetchPerfilInfo = async () => {
     }
 };
 
-document.getElementById("perfil-picture").addEventListener('click', (event) => {
-    const editButton = document.getElementById("edit-btn");
-    const saveButton = document.getElementById("save-btn");
-
-    // Se o botão de editar estiver visível, redireciona para a página de perfil do usuário
-    if (editButton.style.display === "inline-block") {
-        const userId = auth.currentUser.uid;
-        window.location.href = `../user/index.html?userId=${userId}`;
-    } 
-    // Se o botão de salvar estiver visível, abre o explorador de arquivos para trocar a foto de perfil
-    else if (saveButton.style.display === "inline-block") {
-        handleImageClick(event); // Função que abre o explorador de arquivos
-    }
-});
-
-// Função para habilitar o modo de edição
+// Função para ativar o modo de edição do perfil
 export const enableEditMode = () => {
     document.getElementById("perfil-name").contentEditable = true;
     document.getElementById("perfil-email").contentEditable = true;
     document.getElementById("perfil-contact").contentEditable = true;
-    document.getElementById("save-btn").style.display = "inline-block"; // Botão salvar visível
-    document.getElementById("edit-btn").style.display = "none"; // Botão editar invisível
+    document.getElementById("save-btn").style.display = "inline-block";
+    document.getElementById("edit-btn").style.display = "none";
 };
 
 // Função para salvar as alterações no perfil
@@ -174,6 +147,9 @@ const handleImageClick = () => {
     };
     input.click();
 };
+
+// Adicionando o evento de clique na foto de perfil
+document.getElementById('perfil-picture').addEventListener('click', handleImageClick);
 
 
 // Função de logout

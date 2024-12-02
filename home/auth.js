@@ -53,16 +53,17 @@ export const login = async (name, pass) => {
         return { success: false, message: error.message };
     }
 };
-
 // Função de registro
 export const register = async (email, name, pass) => {
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
         const user = userCredential.user;
 
+        // Adicionando o campo 'contact' com o valor "contato"
         await setDoc(doc(firestore, 'users', user.uid), {
             email: email,
-            name: name
+            name: name,
+            contact: 'contato'  // Campo contact com o valor fixo
         });
 
         return { success: true, message: 'Registro bem-sucedido!' };

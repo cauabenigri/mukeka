@@ -255,6 +255,11 @@ h2 {
 }
 
 
+.header-text:hover{
+    cursor:pointer;
+}
+
+
 #notification.hidden {
     opacity: 0;
     transform: translate(-50%, -50%) translateY(-20px);

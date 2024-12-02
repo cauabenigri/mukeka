@@ -22,7 +22,7 @@ import {
 import { checkAuth, fetchPerfilInfo, enableEditMode, saveProfileChanges } from './auth-profile.js';
 import { fetchAndDisplayMusic, uploadMusicToFirestore } from './music.js';
 import { setupModals } from './modals.js';  // Importe a função de setup dos modais
-
+import './search.js';
 
 
 
@@ -36,6 +36,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const musicDataModal = document.getElementById("musicDataModal");
     const uploadModal = document.getElementById("myModal");
     const perfilModal = document.getElementById("perfilModal");
+
     const progressBar = document.getElementById('progress-bar');
     const coverPreview = document.getElementById('cover-preview');
     const bpmValueDisplay = document.getElementById('bpm-value');
@@ -62,7 +63,37 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     };
 
-    
+    const fileInput = document.getElementById('file-input');
+const fileInputLabel = document.getElementById('file-input-label');
+
+// Evento para quando o arquivo for selecionado
+fileInput.addEventListener('change', function() {
+    if (fileInput.files && fileInput.files[0]) {
+        const fileName = fileInput.files[0].name;
+        fileInputLabel.textContent = fileName; // Atualiza o label para o nome do arquivo
+    } else {
+        fileInputLabel.textContent = "Áudio"; // Retorna ao nome original caso não haja arquivo
+    }
+});
+
+// Função para exibir notificações (para facilitar no futuro)
+function showNotification(message, type = 'success') {
+    const notification = document.getElementById('notification');
+    notification.textContent = message;
+
+    notification.classList.remove('success', 'error');
+
+    if (type === 'success') {
+        notification.classList.add('success');
+    } else if (type === 'error') {
+        notification.classList.add('error');
+    }
+
+    notification.classList.remove('hidden');
+    setTimeout(() => {
+        notification.classList.add('hidden');
+    }, 5000); // Duração de 5 segundos
+}
 
     // Handle Upload Form Submission
     const uploadFormHandler = async (event) => {
@@ -126,6 +157,17 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
     // Função para exibir notificações
     function showNotification(message, type = 'success') {
         const notification = document.getElementById('notification');
@@ -152,8 +194,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 
-    // Inicialização
-    setupModals(uploadModal, musicDataModal, perfilModal, fetchPerfilInfo);
+
+    
+// Passa os modais para a função de configuração
+setupModals(uploadModal, musicDataModal, perfilModal, fetchPerfilInfo);
 
     setupCoverPreview();
     document.getElementById('upload-form').addEventListener('submit', uploadFormHandler);
