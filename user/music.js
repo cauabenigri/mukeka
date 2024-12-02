@@ -197,6 +197,29 @@ const deleteMusic = async (musicId) => {
 };
 
 
+const displayUserInfo = async () => {
+    const userId = getUserIdFromURL(); // Obtém o ID do usuário da URL
+
+    if (!userId) {
+        console.error("User ID não encontrado na URL.");
+        return;
+    }
+
+    try {
+        const userDetails = await fetchUserDetails(userId); // Busca os dados do Firestore
+
+        // Atualiza o container com os dados do usuário
+        document.getElementById('user-profile-pic').src = userDetails.userProfilePic;
+        document.getElementById('user-name').textContent = userDetails.userName;
+        document.getElementById('user-contact').textContent = userDetails.userContact;
+    } catch (error) {
+        console.error("Erro ao exibir informações do usuário:", error);
+    }
+};
+
+// Chama a função para exibir as informações do usuário quando a página carregar
+document.addEventListener('DOMContentLoaded', displayUserInfo);
+
 
 
 
