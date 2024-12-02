@@ -122,68 +122,63 @@ export const displayMusicDetails = (data) => {
     document.getElementById('music-pix-key').textContent = data.pixKey;
     document.getElementById('music-cover').src = data.coverUrl || defaultCoverUrl;
 
-    // Atualiza o player de música
     const audioPlayer = document.getElementById('music-player');
     const audioSource = document.getElementById('music-player-source');
     audioSource.src = data.mp3Url || data.wavUrl || '';
-    audioPlayer.load(); // Recarrega o player com a nova música
-    audioPlayer.play(); // Reproduz a música automaticamente
+    audioPlayer.load();
+    audioPlayer.play();
 
     fetchUserDetails(data.userId).then(({ userName, userContact, userProfilePic }) => {
         const usernameElement = document.getElementById('music-username');
-        usernameElement.textContent = ``;
+        usernameElement.textContent = '';
 
         const userLink = document.createElement('a');
         userLink.href = `../user/index.html?userId=${data.userId}`;
         userLink.textContent = userName;
-        userLink.style.textDecoration = "none";
-        userLink.style.color = "#007bff";
+        userLink.style.textDecoration = 'none';
+        userLink.style.color = '#007bff';
         usernameElement.appendChild(userLink);
 
-        document.getElementById('music-contact').textContent = `${userContact}`;
+        document.getElementById('music-contact').textContent = userContact;
         document.getElementById('music-profile-pic').src = userProfilePic;
     });
 
-    // Verifica se o usuário logado é o mesmo que o dono da música
     const auth = getAuth();
     const user = auth.currentUser;
-
-    // Identifica os botões
     const buyButton = document.getElementById('buy-button');
     const editButton = document.getElementById('edit-music-button');
 
     if (user && user.uid === data.userId) {
-        // Se for o mesmo usuário, mostra o botão de editar e esconde o de comprar
-        buyButton.style.display = 'none';  // Torna o botão de comprar invisível
-        editButton.style.display = 'block'; // Torna o botão de editar visível
+        buyButton.style.display = 'none';
+        editButton.style.display = 'block';
 
-        // Adiciona o evento de clique no botão de editar para excluir a música
-        editButton.addEventListener('click', () => {
-            const musicId = data.id; // ID do documento da música que será excluído
-            deleteMusic(musicId);  // Chama a função para deletar a música
-        });
+        // Remove event listeners antigos
+        const newEditButton = editButton.cloneNode(true);
+        editButton.parentNode.replaceChild(newEditButton, editButton);
 
+        // Adiciona o evento apenas uma vez
+        newEditButton.addEventListener('click', () => deleteMusic(data.id));
     } else {
-        // Caso contrário, esconde o botão de editar e mostra o de comprar
-        buyButton.style.display = 'block';  // Torna o botão de comprar visível
-        editButton.style.display = 'none';  // Torna o botão de editar invisível
+        buyButton.style.display = 'block';
+        editButton.style.display = 'none';
     }
 
-    // Exibe o modal de detalhes da música
-    document.getElementById("musicDataModal").classList.add("show");
+    document.getElementById('musicDataModal').classList.add('show');
 };
+
 
 // Função para excluir a música do Firestore
 const deleteMusic = async (musicId) => {
     try {
-        const musicRef = doc(firestore, 'uploads', musicId); // Obtém a referência do documento da música
-        await deleteDoc(musicRef);  // Deleta o documento
-        showNotification("Excluido com sucesso!", 'error')
-        
-        // Recarrega a página após a exclusão
-        window.location.reload();  // Isso recarregará a página, atualizando a interface
+        const musicRef = doc(firestore, 'uploads', musicId);
+        await deleteDoc(musicRef);
+        showNotification('Música excluída com sucesso!', 'success');
+
+        // Atualiza a lista sem recarregar a página
+        fetchAndDisplayMusic();
     } catch (error) {
-        console.error("Erro ao excluir a música:", error);
+        console.error('Erro ao excluir a música:', error);
+        showNotification('Erro ao excluir a música.', 'error');
     }
 };
 
