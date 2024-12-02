@@ -18,7 +18,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const firestore = getFirestore(app);
-const loggedInUserId = user ? user.uid : null; // Obtém o ID do usuário logado
+
 
 // Variável para identificar o contexto de autenticação
 let isRegistering = false;
